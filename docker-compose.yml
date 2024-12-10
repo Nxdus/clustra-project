@@ -14,12 +14,11 @@ services:
       - db
     command: sh -c "./wait-for-it.sh db:5432 -- npx prisma migrate deploy && npm run start"
     volumes:
-      - ./src:/app/src
-      - ./public:/app/public
-      - ./prisma:/app/prisma
-      - ./package.json:/app/package.json
-      - ./package-lock.json:/app/package-lock.json
-      - ./next.config.js:/app/next.config.js
+      - ./src:/app/src:ro
+      - ./public:/app/public:ro
+      - ./prisma:/app/prisma:ro
+      - ./package.json:/app/package.json:ro
+      - ./next.config.js:/app/next.config.js:ro
     environment:
       DATABASE_URL: postgres://Clustra:123456@db:5432/clustra-db
       NEXT_PUBLIC_API_URL: http://localhost:3000
