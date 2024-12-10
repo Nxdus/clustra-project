@@ -24,7 +24,7 @@ import {
 } from '@/lib/upload-status';
 
 // กำหนดค่า ffmpeg path
-ffmpeg.setFfmpegPath('/opt/homebrew/bin/ffmpeg');
+ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 
 // สร้าง S3 client
 const s3Client = new S3Client({

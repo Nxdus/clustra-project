@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgres://Clustra:123456@localhost:5432/clustra-db
+      NEXT_PUBLIC_API_URL: 
+      AWS_ACCESS_KEY_ID: AKIAWQUOZWE6B7U75K4H
+      AWS_SECRET_ACCESS_KEY: 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
+      AWS_BUCKET_NAME: clustra-bucket-2
+      AWS_REGION: ap-southeast-1
+      CLOUDFRONT_DOMAIN: d2a00ypfuktfqk.cloudfront.net
+      CLOUDFRONT_DISTRIBUTION_ID: E6COYGY4KRPPL
+      CLOUDFRONT_KEY_PAIR_ID: APKAWQUQ2WE6J5QUGDDG
+      CLOUDFRONT_PRIVATE_KEY: -----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEA0/tRfygmPxhUf8hIHB7sgH71q3k2hCPdxs/4ddCbeIkptZp+\nUF2pVsocnlDBN4Lt3gywsD0+83oY+3ctOQdef7ZHIHlajpfi5o82zwyR4D7gb0ik\noQozuUe8ilTu6RlX55GChCDNLOObRbRFsLx8n+NKYAXoW0mVCLYVZUMN141LhaKJ\ntS8RG4RkdeZiCO37AOHNRPZQcDNQyshjWuyeunS89tFaPJmeohYCs14sA8s4DXtN\nebvfIrs0CJDdME5kacHAntCCM/ixHTYknkXVLTqB9j29tM3oojuJTKunpa2K2ITB\nokj1SGN08JJW/86c/plhbs0V67BadytqcJqBQQIDAQABAoIBACEP0gKokuqFU2yI\nosKMCivyYUOoyJlsdKMU/bX2XsE6d2BlI61KJmasaDFC/Be52nqm9QnPy5ky4mGa\nEVoTLahyl/5XHwodY1y9WnmJhtj4RY3lwROC4VVU/HGA1LBTbRPnbHlKGmYVa7q/\n5pytkSxoyUlXsolGXTG6IHUmM6r6DFAyqp3pAtxkgATD7/RK/AiMd2rSyLxzDB6I\nRPR6Yz9xLwny/nBiZreuYlIZxE6qOkGE3UZ2gm086+fQfo0tl2hr8rKGZpdQk94d\nzu/2colYgOkpY9wMaoFelW/dKDJC8qMjz4yJZ3Z3/ioZngGz88FH0OetpFj5RNJ1\nhz31CPcCgYEA93wsdXpVdCFqg6gY1KzZrRZkmAnG8w8OIhHu99edVVL8C3M5ZQM5\nC55Amm2+sMBWTeH/234E8R/mOVzyp6Wlzd31lPUkq7HJAekELvQUL3SZfVl7Ci3D\nM8PH/jZd45xQ+VDCCxrx1Wz+Q5fp4znRTQ1npuQ+HRuA+D5aLy12QM8CgYEA20Zv\nNXAeOvoxNcNl0mDtVpsYfUQ/EQ+Nocpb1LWUV+Wp5TELKzmIEW3FwQUqtdiWdv48\nJgZ9SnWbCI1UCn8/Mg08KEt8cwxoIb5T621TCF36CPDnsUzOAg0e9TSEvRN2t99V\nJdiZzrN5adiYOGISkHC8QwaEzYtu10cYyxKMAO8CgYBgcDDa7nrSMBtThnN2nIyO\nWEWGwXiXSmyVdiuKxKh4kUfKJnJdHG5kSpyeENnYAnsfCkwreeXvGCEchU3Balk7\n6ZxDGWvaxAKyDd0ldtNO0r7lC7NYehCw4T/TndfkVAtxu7iBn1RReJF0QYRQmT0o\nK2sSq6pQqWEOWy3FaI/GHQKBgFh3hVyw/HFdCcegKw+C7Z6Yenvnse4nMURKSVx7\nWftQfIgsjk4FKyGlATkL5ZxyYtplXk0VJy2IX2FG69ZEWnHOJyw2sGIWalja2i7M\n78gbakp7L284BpGLS6cwZjGGjcpHf6oCRqO/g0eyDFALOWQvJ7V/BsuK6tBOLfGY\nbQXfAoGAf61G9sI9mZHFbdNCsjyyZ16u0MGdexcCpPA8a4oyLjVZTmxFjEiZXczL\nnDgeS1gyhCrD+mqy5mw17Cn4Dh/X/dtPv06zLjBvlBh6eFzxBnrt8xjKFW8Zm4iI\nwxfEalnVySBrB/giVq9m2ors2b0Uo9yKKQu/gQjvYfDmDtXGZMY=\n-----END RSA PRIVATE KEY-----
+      CLOUDFRONT_RESPONSE_HEADERS_POLICY_ID: 6ab76114-9895-4d31-828a-5ec53fe5ba63
+      GOOGLE_CLIENT_ID: 809132542468-pb096rh1fp6p9r8gpd7m8b79c8jqinpi.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
+      NEXTAUTH_URL: 
+      NEXTAUTH_SECRET: Z8Aqrayk+3755+fTS8sYYjZ5/ITuAPPmK9yNU3DQ9bc=
+      STRIPE_SECRET_KEY: sk_test_51QRb5aH4oklz2WpCpJu337a30yF1sC9Ah7XdZIVKfSs1VS5ZcxKYKgVJRJBsixc7p2AMnoh5hLQszcA1p8qxue1l00Sxqc0Mts
+      STRIPE_WEBHOOK_SECRET: 
+      STRIPE_MONTHLY_PRICE_ID: price_1QT3mWH4oklz2WpCJX1NC3Yb
+      STRIPE_ANNUAL_PRICE_ID: price_1QT3m4H4oklz2WpC5sGGjR8J
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app
+    volumes:
+      - certs:/etc/letsencrypt
+      - certs-data:/data/letsencrypt
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - certs:/etc/letsencrypt
+      - certs-data:/data/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: Clustra
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: clustra-db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  certs:
+  certs-data:
