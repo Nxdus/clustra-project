@@ -23,8 +23,8 @@ import {
   setError
 } from '@/lib/upload-status';
 
-// กำหนดค่า ffmpeg path
-ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
+// กำหนดค่า ffmpeg path /usr/bin/ffmpeg
+ffmpeg.setFfmpegPath('/opt/homebrew/bin/ffmpeg');
 
 // สร้าง S3 client
 const s3Client = new S3Client({
@@ -95,65 +95,6 @@ const calculateTotalSize = (m3u8Buffer: Buffer, segmentFiles: string[], outputDi
   }
   
   return totalSize;
-};
-
-// เพิ่มฟังก์ชั่นตรวจสอบข้อจำกัด
-const checkUserLimits = async (userId: string, fileSize: number) => {
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      role: true,
-      totalStorageUsed: true,
-      monthlyUploads: true,
-      lastUploadReset: true
-    }
-  });
-
-  if (!user) throw new Error('ไม่พบข้อมูลผู้ใช้');
-
-  // รีเซ็ตจำนวนการอัพโหลดรายเดือน
-  const now = new Date();
-  const lastReset = new Date(user.lastUploadReset);
-  if (lastReset.getMonth() !== now.getMonth() || lastReset.getFullYear() !== now.getFullYear()) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        monthlyUploads: 0,
-        lastUploadReset: now
-      }
-    });
-    user.monthlyUploads = 0;
-  }
-
-  // ตรวจสอบข้อจำกัดตาม Role
-  const limits = {
-    FREE: {
-      storage: 2 * 1024 * 1024 * 1024, // 2GB
-      monthlyUploads: 5
-    },
-    PRO: {
-      storage: 20 * 1024 * 1024 * 1024, // 20GB
-      monthlyUploads: Infinity
-    },
-    ENTERPRISE: {
-      storage: Infinity,
-      monthlyUploads: Infinity
-    }
-  };
-
-  const userLimits = limits[user.role as keyof typeof limits];
-
-  // ตรวจสอบพื้นที่เก็บข้อมูล
-  if (userLimits.storage !== Infinity && user.totalStorageUsed + fileSize > userLimits.storage) {
-    throw new Error('พื้นที่จัดเก็บไม่เพียงพอ');
-  }
-
-  // ตรวจสอบจำนวนการอัพโหลดต่อเดือน
-  if (userLimits.monthlyUploads !== Infinity && user.monthlyUploads >= userLimits.monthlyUploads) {
-    throw new Error('คุณได้ใช้จำนวนครั้งในการอัพโหลดของเดือนนี้หมดแล้ว');
-  }
-
-  return user;
 };
 
 // Main API Handler
@@ -383,7 +324,7 @@ export async function POST(req: Request) {
 
       updateProgress(uploadId, 100, 'completed');
 
-      // 8. ท��ความสะอาดไฟล์ชั่วคราว
+      // 8. ทความสะอาดไฟล์ชั่วคราว
       fs.unlinkSync(filePath);
       fs.rmSync(outputDir, { recursive: true, force: true });
 

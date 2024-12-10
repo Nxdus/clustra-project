@@ -156,6 +156,7 @@
       "uploadedAt": "Uploaded on"
     },
     "upload": {
+      "description": "Upload your videos with just a few clicks",
       "title": "Upload Video File",
       "button": "Upload Video",
       "dragDrop": "Drag and drop video file here, or click to select",

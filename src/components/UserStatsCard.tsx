@@ -2,7 +2,7 @@ import React from "react"
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card"
 import { Progress } from "./ui/progress"
 import { useSession } from "next-auth/react"
-import { ArrowRight, Rocket, HardDrive, Upload } from "lucide-react"
+import { Rocket, HardDrive, Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from 'next-intl'
 import { UpgradeButton } from "./upgrade-button"

@@ -15,7 +15,7 @@ import { Trash2, Code, Copy, Pencil, Check, X, Globe, Lock } from "lucide-react"
 import { Switch } from "./ui/switch"
 import { toast } from "@/hooks/use-toast"
 import { Video } from "@/types/video"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "./ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
 import { VideoDialog } from "./VideoDialog"
 import { Input } from "./ui/input"
 import { useState } from "react"
@@ -87,6 +87,184 @@ const AccessControl = React.memo(({ video, onUpdateAccess }: { video: Video, onU
 });
 AccessControl.displayName = 'AccessControl';
 
+const TitleCell = ({ row, onRename }: { 
+  row: { original: Video },
+  onRename: () => Promise<void> 
+}) => {
+    const video = row.original;
+    const [isEditing, setIsEditing] = useState(false);
+    const [newName, setNewName] = useState(video.displayName || video.name);
+    const t = useTranslations();
+
+    const handleRename = async () => {
+        try {
+            const response = await fetch('/api/videos/rename', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    videoId: video.id,
+                    displayName: newName
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to rename video');
+            }
+
+            setIsEditing(false);
+            await onRename();
+            toast({
+                title: t('success.title'),
+                description: t('video.rename.success')
+            });
+        } catch {
+            toast({
+                title: t('error.title'),
+                description: t('error.description'),
+                variant: 'destructive',
+            });
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center gap-2">
+            {isEditing ? (
+                <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md">
+                    <Input
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        className="h-8 w-48 bg-background text-center"
+                        autoFocus
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                handleRename();
+                            } else if (e.key === 'Escape') {
+                                setIsEditing(false);
+                            }
+                        }}
+                    />
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRename}
+                        className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                        <Check className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsEditing(false)}
+                        className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                </div>
+            ) : (
+                <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-center">{video.displayName || video.name}</span>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsEditing(true)}
+                        className="h-7 w-7 p-0 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                        <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const CellComponent = ({ row, locale }: { row: { original: Video }, locale: string }) => {
+    const date = new Date(row.original.uploadedAt);
+    return (
+        <div className="text-center">
+            <span className="text-sm text-muted-foreground">
+                {date.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                })}
+            </span>
+        </div>
+    );
+};
+
+const ActionsCell = ({ row, onDelete, onRefreshStats }: { 
+    row: { original: Video }, 
+    onDelete: (fileKey: string) => Promise<void>,
+    onRefreshStats: () => Promise<void>
+}) => {
+    const video = row.original;
+    const staticUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}`;
+    const t = useTranslations();
+    
+    return (
+        <div className="flex items-center justify-center gap-2">
+            <VideoDialog video={video} />
+            <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
+                onClick={() => {
+                    navigator.clipboard.writeText(staticUrl);
+                    toast({
+                        title: t('video.copy.success'),
+                        description: t('video.copy.description')
+                    });
+                }}
+            >
+                <Copy className="h-4 w-4 mr-2" />
+                {t('video.copy.button')}
+            </Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button 
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                        <Code className="h-4 w-4 mr-2" />
+                        {t('video.viewCode')}
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('video.viewCode')}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
+                            <code>
+                                {`<video controls>
+    <source src="${staticUrl}" type="application/x-mpegURL">
+</video>`}
+                            </code>
+                        </pre>
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
+                onClick={async () => {
+                    try {
+                        await onDelete(video.id);
+                        await onRefreshStats();
+                    } catch (error) {
+                        console.error('Error deleting video:', error);
+                    }
+                }}
+            >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {t('video.delete')}
+            </Button>
+        </div>
+    );
+};
+
 export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefreshStats }: VideoTableProps) {
     const t = useTranslations()
     const locale = useLocale()
@@ -101,111 +279,13 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
             accessorKey: 'title',
             header: t('video.table.title'),
             size: 300,
-            cell: ({ row }) => {
-                const video = row.original;
-                const [isEditing, setIsEditing] = useState(false);
-                const [newName, setNewName] = useState(video.displayName || video.name);
-                const t = useTranslations();
-
-                const handleRename = async () => {
-                    try {
-                        const response = await fetch('/api/videos/rename', {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                videoId: video.id,
-                                displayName: newName
-                            })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Failed to rename video');
-                        }
-
-                        setIsEditing(false);
-                        await onRename();
-                        toast({
-                            title: t('success.title'),
-                            description: t('video.rename.success')
-                        });
-                    } catch (error) {
-                        toast({
-                            title: t('error.title'),
-                            description: t('video.rename.error'),
-                            variant: "destructive"
-                        });
-                    }
-                };
-
-                return (
-                    <div className="flex items-center justify-center gap-2">
-                        {isEditing ? (
-                            <div className="flex items-center gap-2 bg-muted/50 p-2 rounded-md">
-                                <Input
-                                    value={newName}
-                                    onChange={(e) => setNewName(e.target.value)}
-                                    className="h-8 w-48 bg-background text-center"
-                                    autoFocus
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleRename();
-                                        } else if (e.key === 'Escape') {
-                                            setIsEditing(false);
-                                        }
-                                    }}
-                                />
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleRename}
-                                    className="h-8 w-8 p-0 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
-                                >
-                                    <Check className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setIsEditing(false)}
-                                    className="h-8 w-8 p-0 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        ) : (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-center">{video.displayName || video.name}</span>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setIsEditing(true)}
-                                    className="h-7 w-7 p-0 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                    <Pencil className="h-3.5 w-3.5" />
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                );
-            }
+            cell: ({ row }) => <TitleCell row={row} onRename={onRename} />
         },
         {
             accessorKey: 'createdAt',
             header: t('video.table.uploadDate'),
             size: 200,
-            cell: ({ row }) => {
-                const date = new Date(row.original.uploadedAt);
-                return (
-                    <div className="text-center">
-                        <span className="text-sm text-muted-foreground">
-                            {date.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                            })}
-                        </span>
-                    </div>
-                )
-            }
+            cell: ({ row }) => <CellComponent row={row} locale={locale} />
         },
         {
             accessorKey: 'isPublic',
@@ -232,87 +312,7 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
         },
         {
             id: 'actions',
-            cell: ({ row }) => {
-                const video = row.original;
-                const staticUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}`;
-                const t = useTranslations();
-                
-                return (
-                    <div className="flex items-center justify-center gap-2">
-                        <VideoDialog video={video} />
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
-                            onClick={() => {
-                                navigator.clipboard.writeText(staticUrl);
-                                toast({
-                                    title: t('video.copy.success'),
-                                    description: t('video.copy.description')
-                                });
-                            }}
-                        >
-                            <Copy className="h-4 w-4 mr-2" />
-                            {t('video.copy.button')}
-                        </Button>
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button 
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
-                                >
-                                    <Code className="h-4 w-4 mr-2" />
-                                    {t('video.viewCode')}
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="sm:max-w-[600px]">
-                                <DialogHeader>
-                                    <DialogTitle id="dialog-title">{t('video.code.title')}</DialogTitle>
-                                    <DialogDescription id="dialog-description">
-                                        {t('video.code.description')}
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="space-y-3">
-                                    <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900 font-mono text-sm">
-                                        <pre className="whitespace-pre-wrap break-all">
-                                            {`<video id="player" controls>\n    <source src="${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}" type="application/x-mpegURL">\n</video>\n\n<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>\n\n<script>\n    const video = document.getElementById('player');\n    if(Hls.isSupported()) {\n        const hls = new Hls();\n        hls.loadSource('${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}');\n        hls.attachMedia(video);\n    }\n</script>`}
-                                        </pre>
-                                    </div>
-                                    <Button
-                                        className="w-full bg-blue-600 hover:bg-blue-500"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(`<video id="player" controls>\n    <source src="${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}" type="application/x-mpegURL">\n</video>\n\n<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>\n\n<script>\n    const video = document.getElementById('player');\n    if(Hls.isSupported()) {\n        const hls = new Hls();\n        hls.loadSource('${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}');\n        hls.attachMedia(video);\n    }\n</script>`);
-                                            toast({
-                                                title: t('video.code.success'),
-                                                description: t('video.code.description')
-                                            });
-                                        }}
-                                    >
-                                        {t('video.code.copy')}
-                                    </Button>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 dark:hover:text-red-400"
-                            onClick={async () => {
-                                try {
-                                    await onDelete(video.id);
-                                    await onRefreshStats();
-                                } catch (error) {
-                                    console.error('Error deleting video:', error);
-                                }
-                            }}
-                        >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {t('video.delete')}
-                        </Button>
-                    </div>
-                );
-            }
+            cell: ({ row }) => <ActionsCell row={row} onDelete={onDelete} onRefreshStats={onRefreshStats} />
         }
     ]
 

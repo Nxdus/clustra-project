@@ -1,5 +1,5 @@
 import * as React from "react"
-import Hls from 'hls.js'
+import Hls, { ErrorData, Events } from 'hls.js'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogPortal, DialogDescription } from "./ui/dialog"
 import { Button } from "./ui/button"
 import { Play, Copy } from "lucide-react"
@@ -53,7 +53,7 @@ const VideoPlayer = React.memo(({ video, onError }: VideoPlayerProps) => {
 
                 hlsRef.current = hls;
 
-                const handleError = (event: any, data: any) => {
+                const handleError = (event: Events.ERROR, data: ErrorData) => {
                     if (signal.aborted) return;
 
                     if (data.fatal) {

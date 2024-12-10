@@ -3,63 +3,61 @@ import { createTranslator } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { Providers } from './providers';
 import { Toaster } from '@/components/ui/toaster';
+import { Metadata } from 'next';
 
 import '@/app/globals.css';
 
-// กำหนด timeZone เป็นค่าคงที่
 const timeZone = 'Asia/Bangkok';
 
-// generateMetadata
+// แก้ไข type ของ generateMetadata
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: Promise<string> };
-}) {
-  const resolvedParams = await params;
-  const resolvedLocale = await resolvedParams.locale;
-  
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const validLocales = ['th', 'en'];
-  if (!validLocales.includes(resolvedLocale)) {
+  if (!validLocales.includes(locale)) {
     return { title: 'Default Title' };
   }
 
   try {
-    const messages = (await import(`@/messages/${resolvedLocale}.json`)).default;
+    const messages = (await import(`@/messages/${locale}.json`)).default;
     const t = createTranslator({
-      locale: resolvedLocale,
+      locale,
       messages,
       timeZone,
     });
     return { title: t('meta.title') };
-  } catch (error) {
+  } catch {
     return { title: 'Default Title' };
   }
 }
 
-// LocaleLayout
+// แก้ไข Props type
+interface LayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
 export default async function LocaleLayout({
   children,
   params,
-}: {
-  children: React.ReactNode;
-  params: { locale: Promise<string> };
-}) {
-  const resolvedParams = await params;
-  const resolvedLocale = await resolvedParams.locale;
-
-  // ตรวจสอบว่า locale เป็นค่าที่รองรับ
+}: LayoutProps) {
+  const { locale } = await params;
+  
   const validLocales = ['th', 'en'];
-  if (!validLocales.includes(resolvedLocale)) {
+  if (!validLocales.includes(locale)) {
     notFound();
   }
 
   try {
-    const messages = (await import(`@/messages/${resolvedLocale}.json`)).default;
+    const messages = (await import(`@/messages/${locale}.json`)).default;
 
     return (
-      <html lang={resolvedLocale}>
+      <html lang={locale}>
         <body className="min-h-screen bg-background font-sans antialiased">
-          <Providers locale={resolvedLocale} messages={messages} timeZone={timeZone}>
+          <Providers locale={locale} messages={messages} timeZone={timeZone}>
             {children}
             <Toaster />
           </Providers>
@@ -67,7 +65,7 @@ export default async function LocaleLayout({
       </html>
     );
   } catch (error) {
-    console.error(`Failed to load layout for locale: ${resolvedLocale}`, error);
+    console.error(`Failed to load layout for locale: ${locale}`, error);
     notFound();
   }
 }

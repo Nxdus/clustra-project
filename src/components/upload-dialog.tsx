@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { UploadCloud, Loader2, FileIcon, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -202,7 +201,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [isUploadingToServer]);
+  }, [isUploadingToServer, t]);
 
   React.useEffect(() => {
     return () => {

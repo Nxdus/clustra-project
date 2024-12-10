@@ -30,7 +30,7 @@ export default function Dashboard() {
         throw new Error('Failed to fetch videos');
       }
       const data = await response.json();
-      setVideos(data.videos);
+      setVideos(data.videos || []);
       setIsLoading(false);
     } catch {
       toast({
@@ -47,7 +47,7 @@ export default function Dashboard() {
       if (!response.ok) {
         throw new Error('Failed to fetch user info');
       }
-      const data = await response.json();
+      await response.json();
       setVideos(prevVideos => {
         const updatedVideos = [...prevVideos];
         return updatedVideos;

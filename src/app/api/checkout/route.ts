@@ -8,15 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-11-20.acacia',
 });
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
-    const { priceId, isAnnual } = await req.json();
 
     // ดึงข้อมูล user
     const user = await prisma.user.findUnique({
@@ -34,7 +32,7 @@ export async function POST(req: Request) {
     if (customerId) {
       try {
         await stripe.customers.retrieve(customerId);
-      } catch (error) {
+      } catch {
         customerId = null; // reset เพื่อสร้างใหม่
       }
     }
@@ -63,7 +61,7 @@ export async function POST(req: Request) {
       customer: customerId,
       line_items: [
         {
-          price: isAnnual ? process.env.STRIPE_ANNUAL_PRICE_ID : process.env.STRIPE_MONTHLY_PRICE_ID,
+          price: process.env.STRIPE_ANNUAL_PRICE_ID,
           quantity: 1,
         },
       ],
@@ -82,8 +80,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: checkoutSession.url });
 
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
+  } catch (err) {
+    console.error('Error creating checkout session:', err);
     return NextResponse.json(
       { error: 'เกิดข้อผิดพลาดในการสร้าง checkout session' },
       { status: 500 }

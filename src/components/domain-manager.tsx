@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import { Trash2, Globe } from "lucide-react"
@@ -48,7 +48,7 @@ export function DomainManager() {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const paginatedDomains = domains.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
-  const fetchDomains = async () => {
+  const fetchDomains = useCallback(async () => {
     try {
       const response = await fetch('/api/domains')
       const data = await response.json()
@@ -61,7 +61,7 @@ export function DomainManager() {
         variant: "destructive"
       })
     }
-  }
+  }, [t]);
 
   const handleDelete = async (domainId: string) => {
     try {
@@ -88,7 +88,7 @@ export function DomainManager() {
 
   useEffect(() => {
     fetchDomains()
-  }, [])
+  }, [fetchDomains])
 
   const handleAddDomain = async () => {
     if (!domain.trim()) {

@@ -6,7 +6,7 @@ import { PropsWithChildren } from 'react';
 
 export function Providers({ children, locale, messages, timeZone }: PropsWithChildren<{
   locale: string;
-  messages: any;
+  messages: Record<string, string>;
   timeZone: string;
 }>) {
   return (
