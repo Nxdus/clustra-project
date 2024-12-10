@@ -27,7 +27,7 @@ RUN npx prisma generate
 RUN npm run build
 
 # Setup nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 RUN mkdir -p /data/letsencrypt
 RUN mkdir -p /run/nginx
 
