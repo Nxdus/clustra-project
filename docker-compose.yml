@@ -64,7 +64,10 @@ services:
       - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - nginx
-    command: certonly --webroot --webroot-path=/var/www/certbot -d clustra.tech
+    command: >
+      sh -c "if [ ! -f /etc/letsencrypt/live/clustra.tech/fullchain.pem ]; then
+        certonly --webroot --webroot-path=/var/www/certbot -d clustra.tech --non-interactive --agree-tos -m your@email.com;
+      fi"
 
   db:
     image: postgres:13
