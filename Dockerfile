@@ -43,6 +43,7 @@ RUN npm ci --only=production
 # Copy wait-for-it script
 COPY wait-for-it.sh ./
 RUN chmod +x wait-for-it.sh
+RUN chmod +x certbot-entrypoint.sh
 
 EXPOSE 3000
 

@@ -62,12 +62,10 @@ services:
     volumes:
       - ./certbot/www:/var/www/certbot
       - ./certbot/conf:/etc/letsencrypt
+      - ./certbot-entrypoint.sh:/certbot-entrypoint.sh
     depends_on:
       - nginx
-    command: >
-      sh -c "if [ ! -f /etc/letsencrypt/live/clustra.tech/fullchain.pem ]; then
-        certonly --webroot --webroot-path=/var/www/certbot -d clustra.tech --non-interactive --agree-tos -m your@email.com;
-      fi"
+    entrypoint: ["sh", "/certbot-entrypoint.sh"]
 
   db:
     image: postgres:13
