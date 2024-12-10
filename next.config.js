@@ -7,6 +7,12 @@ const nextConfig = {
   images: {
     domains: ['clustra.tech'], // แก้ไขตามที่คุณใช้งาน
   },
+  // เพิ่ม config สำหรับ authentication
+  auth: {
+    providers: ['google'],
+    secret: process.env.NEXTAUTH_SECRET,
+    trustHost: true
+  }
 }
 
 module.exports = nextConfig 

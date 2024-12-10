@@ -42,7 +42,10 @@ export function SignInDialog({ children }: { children: React.ReactNode }) {
           }}
         >
           <Button
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => signIn("google", { 
+              callbackUrl: "https://clustra.tech",
+              redirect: true
+            })}
             className="w-full bg-blue-600 hover:bg-blue-500 text-white transition-all duration-300 hover:shadow-md group"
           >
             <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text">{t('auth.signInWithGoogle')}</span>

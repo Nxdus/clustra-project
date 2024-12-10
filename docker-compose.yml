@@ -61,7 +61,10 @@ services:
     volumes:
       - certs:/etc/letsencrypt
       - certs-data:/data/letsencrypt
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/data/letsencrypt --email your-email@example.com --agree-tos --no-eff-email --staging -d your-domain.com
 
   db:
     image: postgres:13
