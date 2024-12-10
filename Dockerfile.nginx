@@ -1,19 +1,17 @@
 FROM nginx:alpine
 
+# ลิดตั้ง netcat สำหรับตรวจสอบการเชื่อมต่อ
+RUN apk add --no-cache netcat-openbsd
+
 # ลบการตั้งค่า default
 RUN rm /etc/nginx/conf.d/default.conf
-
-# คร้างโฟลเดอร์สำหรับ SSL
-RUN mkdir -p /etc/nginx/ssl
-
-# สร้าง self-signed certificate
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/nginx/ssl/default.key \
-    -out /etc/nginx/ssl/default.crt \
-    -subj "/CN=localhost"
 
 # คัดลอกไฟล์การตั้งค่า nginx
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY wait-for-it.sh /wait-for-it.sh
+
+# ให้สิทธิ์ในการรันไฟล์ wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
 
 EXPOSE 80 443 
