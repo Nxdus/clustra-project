@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
     ports:
       - "3000:3000"
     depends_on:

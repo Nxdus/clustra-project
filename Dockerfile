@@ -3,6 +3,14 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# รับ build arguments
+ARG STRIPE_SECRET_KEY
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+
+# กำหนดค่า environment variables สำหรับ build time
+ENV STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+
 # ติดตั้ง OpenSSL และ dependencies ที่จำเป็น
 RUN apk add --no-cache openssl
 
