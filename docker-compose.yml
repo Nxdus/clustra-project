@@ -17,7 +17,6 @@ services:
       - ./src:/app/src:ro
       - ./public:/app/public:ro
       - ./prisma:/app/prisma:ro
-      - ./package.json:/app/package.json:ro
       - ./next.config.js:/app/next.config.js:ro
     environment:
       DATABASE_URL: postgres://Clustra:123456@db:5432/clustra-db
