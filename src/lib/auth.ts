@@ -16,6 +16,18 @@ declare module "next-auth" {
 }
 
 export const authOptions: AuthOptions = {
+  debug: true,
+  logger: {
+    error: (code, ...message) => {
+      console.error(code, message)
+    },
+    warn: (code, ...message) => {
+      console.warn(code, message)
+    },
+    debug: (code, ...message) => {
+      console.debug(code, message)
+    },
+  },
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -42,6 +54,6 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: '/en',
+    signIn: '/',
   },
 }
