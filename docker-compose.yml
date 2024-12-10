@@ -69,6 +69,7 @@ services:
       --email paitong1550@gmail.com
       --agree-tos 
       --no-eff-email 
+      --force-renewal
       --staging 
       -d clustra.tech
 
