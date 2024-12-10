@@ -48,18 +48,19 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      - app
     volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - certs:/etc/letsencrypt
       - certs-data:/data/letsencrypt
+    depends_on:
+      - app
 
   certbot:
     image: certbot/certbot
     volumes:
       - certs:/etc/letsencrypt
       - certs-data:/data/letsencrypt
-      - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - nginx
     command: >
@@ -67,9 +68,9 @@ services:
       --webroot-path=/data/letsencrypt 
       --email paitong1550@gmail.com
       --agree-tos 
-      --no-eff-email 
-      --force-renewal
+      --no-eff-email
       -d clustra.tech
+      --staging
 
   db:
     image: postgres:13
