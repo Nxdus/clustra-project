@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "title": "Clustra - Video Conversion Platform"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "signOut": "Sign Out",
+    "signIn": "Sign In"
+  },
+  "auth": {
+    "signInWithGoogle": "Sign in with Google",
+    "signInDescription": "Sign in to your account to continue"
+  },
+  "hero": {
+    "title": "Convert MP4 Videos to M3U8 Easily",
+    "description": "Convert your MP4 videos to M3U8 format with secure cloud storage. Easy to use, fast, and ready to go.",
+    "startFree": "Start Free",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Key Features",
+    "description": "All the features you need for video conversion",
+    "upload": {
+      "title": "Easy Upload",
+      "description": "Upload your MP4 videos with just a few clicks"
+    },
+    "convert": {
+      "title": "Fast Conversion",
+      "description": "Convert videos to M3U8 format quickly and efficiently"
+    },
+    "store": {
+      "title": "Secure Storage",
+      "description": "Store your videos securely in the cloud"
+    }
+  },
+  "pricing": {
+    "title": "Pricing & Plans",
+    "description": "Choose a plan that fits your needs",
+    "monthly": "Monthly",
+    "annually": "Annually",
+    "popular": "Popular",
+    "savePercent": "Save 25%",
+
+    "free": {
+      "title": "Free",
+      "description": "For individual users",
+      "action": "Start Free",
+      "features": {
+        "storage": "5GB Storage",
+        "convert": "5 Videos/Month",
+        "quality": "Standard Quality",
+        "domain": "2 Domain Limit"
+      }
+    },
+    "pro": {
+      "title": "Pro",
+      "description": "For professional users",
+      "action": "Get Started",
+      "features": {
+        "storage": "100GB Storage",
+        "convert": "Unlimited Videos",
+        "quality": "4K Quality",
+        "priority": "Priority Support",
+        "domain": "5 Domain Limit"
+      }
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "description": "For large businesses",
+      "price": "Contact Sales",
+      "action": "Contact Us",
+      "features": {
+        "unlimited": "Unlimited Storage",
+        "support": "24/7 Support",
+        "api": "Full API Access",
+        "custom": "Custom Solutions"
+      }
+    }
+  },
+  "common": {
+    "videos": "Videos",
+    "noVideos": "No videos found",
+    "dashboard": "Dashboard",
+    "domains": "Domains",
+    "settings": "Settings",
+    "logout": "Logout",
+    "previous": "Previous",
+    "next": "Next",
+    "unlimited": "Unlimited",
+    "cancel": "Cancel",
+    "processing": "Processing..."
+  },
+  "error": {
+    "title": "Error",
+    "fetchVideos": "Could not load videos",
+    "deleteVideo": "Could not delete video",
+    "updateAccess": "Could not update access",
+    "serverConnection": "Could not connect to server"
+  },
+  "success": {
+    "title": "Success",
+    "deleteVideo": "Video deleted successfully",
+    "deleteVideoDesc": "The video has been removed from the system"
+  },
+  "confirm": {
+    "deleteVideo": "Are you sure you want to delete this video?"
+  },
+  "video": {
+    "manage": "Manage Videos",
+    "description": "Upload and manage your videos",
+    "table": {
+      "title": "Filename",
+      "uploadDate": "Upload Date",
+      "access": "Access",
+      "total": "Total {count} items"
+    },
+    "access": {
+      "public": "Public",
+      "private": "Private",
+      "success": "Access updated successfully",
+      "error": "Could not update access"
+    },
+    "copy": {
+      "success": "URL Copied",
+      "description": "URL has been copied to clipboard",
+      "button": "Copy URL"
+    },
+    "viewCode": "View Code",
+    "search": {
+      "placeholder": "Search videos..."
+    },
+    "rename": {
+      "success": "Video renamed successfully",
+      "error": "Could not rename video"
+    },
+    "code": {
+      "title": "Sample Code",
+      "copy": "Copy Code",
+      "success": "Code copied",
+      "description": "You can now paste the code in your webpage"
+    },
+    "empty": {
+      "title": "No videos yet",
+      "description": "Please upload your videos"
+    },
+    "delete": "Delete",
+    "dialog": {
+      "play": "Play Video",
+      "watchVideo": "Watch your video",
+      "public": "Public",
+      "private": "Private",
+      "error": "Error",
+      "m3u8Link": "Video m3u8 Link:",
+      "copySuccess": "URL Copied",
+      "copyDesc": "URL has been copied to clipboard",
+      "uploadedAt": "Uploaded on"
+    },
+    "upload": {
+      "title": "Upload Video File",
+      "button": "Upload Video",
+      "dragDrop": "Drag and drop video file here, or click to select",
+      "supportedFormats": "Supports MP4 files only",
+      "uploadButton": "Upload File",
+      "uploading": "Uploading...",
+      "processing": "Processing...",
+      "processingStatus": "Processing video... ({progress}%)",
+      "uploadingStatus": "Uploading file... ({progress}%)",
+      "completed": "Upload Complete",
+      "cannotClose": "Cannot Close",
+      "waitProcessing": "Please wait until processing is complete",
+      "waitUploading": "Please wait until upload is complete",
+      "uploadSuccess": "Upload Successful",
+      "uploadComplete": "Your file has been uploaded successfully",
+      "uploadCanceled": "Upload canceled",
+      "uploadError": "Error uploading file",
+      "limitReached": {
+        "title": "Cannot Upload",
+        "description": "You have reached your upload limit. Please upgrade your package to increase upload quota"
+      },
+      "leaveConfirm": "Upload is in progress. Are you sure you want to leave this page?"
+    },
+    "error": {
+      "title": "Error",
+      "playback": "Error playing video",
+      "uploadFailed": "Upload failed",
+      "fileType": "Only MP4 files are supported"
+    },
+    "process": {
+      "title": "Processing",
+      "converting": "Converting Video",
+      "uploading": "Uploading",
+      "status": {
+        "converting": "Converting... {progress}%",
+        "uploading": "Uploading... {progress}%",
+        "complete": "Complete",
+        "error": "Error"
+      },
+      "wait": {
+        "converting": "Please wait while converting video",
+        "uploading": "Please wait while uploading file"
+      }
+    },
+    "toast": {
+      "upload": {
+        "success": {
+          "title": "Upload Success",
+          "description": "Your file has been uploaded successfully"
+        },
+        "error": {
+          "title": "Upload Error",
+          "description": "Could not upload file"
+        },
+        "cancel": {
+          "title": "Upload Cancelled",
+          "description": "Upload has been cancelled"
+        },
+        "limit": {
+          "title": "Limit Exceeded",
+          "description": "You have reached your upload limit. Please upgrade your package"
+        }
+      }
+    }
+  },
+  "domain": {
+    "manage": "Manage Allowed Domains",
+    "add": {
+      "title": "Add Allowed Domains ({count}/{limit})",
+      "placeholder": "Enter your domain (e.g. example.com)",
+      "button": "Add Domain",
+      "loading": "Adding..."
+    },
+    "empty": {
+      "title": "No allowed domains",
+      "description": "Please add domains you want to allow"
+    },
+    "total": "Total {count} domains ({remaining} remaining)",
+    "error": {
+      "fetch": "Could not load domains",
+      "delete": "Could not delete domain",
+      "add": "Could not add domain",
+      "empty": "Please enter a domain"
+    },
+    "success": {
+      "delete": "Domain deleted successfully",
+      "add": "Domain added successfully"
+    }
+  },
+  "stats": {
+    "title": "Usage Statistics",
+    "storage": {
+      "title": "Storage Used"
+    },
+    "uploads": {
+      "title": "Monthly Uploads"
+    },
+    "upgrade": {
+      "title": "Upgrade to PRO for more benefits!",
+      "button": "Upgrade Plan"
+    },
+    "pro": {
+      "title": "Your PRO Benefits",
+      "storage": "20GB Storage",
+      "uploads": "Unlimited Monthly Uploads",
+      "domains": "Up to 5 Domains"
+    }
+  },
+  "footer": {
+    "company": {
+      "title": "Company",
+      "about": "About Us",
+      "careers": "Careers",
+      "blog": "Blog"
+    },
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "docs": "Documentation"
+    },
+    "support": {
+      "title": "Support",
+      "contact": "Contact",
+      "faq": "FAQ",
+      "status": "System Status"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    },
+    "copyright": "© 2024 Clustra. All rights reserved.",
+    "love": "Made with ❤️ by _.ptxz"
+  },
+  "upload": {
+    "title": "Upload Video",
+    "description": "Select a video file to upload",
+    "button": "Upload Video",
+    "dropzone": {
+      "title": "Drop files here",
+      "description": "or click to select files",
+      "maxSize": "Max file size: {size}MB"
+    },
+    "progress": {
+      "uploading": "Uploading...",
+      "converting": "Converting...",
+      "success": "Upload successful",
+      "error": "Upload failed"
+    }
+  },
+  "videoDialog": {
+    "title": "Play Video",
+    "description": "Watch your video",
+    "url": "Video m3u8 URL",
+    "uploadDate": "Uploaded on {date}"
+  },
+  "subscription": {
+    "cancel": {
+      "button": "Cancel Subscription",
+      "title": "Cancel Subscription",
+      "description": "Are you sure you want to cancel your subscription? You will lose access to PRO features at the end of your billing period.",
+      "confirm": "Yes, cancel subscription",
+      "success": "Subscription cancelled successfully",
+      "error": "Failed to cancel subscription"
+    }
+  }
+}
