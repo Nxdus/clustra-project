@@ -28,7 +28,18 @@ export const authOptions: AuthOptions = {
       console.debug(code, message)
     },
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    getUserByEmail: async (email: string) => {
+      const user = await prisma.user.findUnique({
+        where: { email: email || '' }
+      })
+      return user ? {
+        ...user,
+        email: user.email || '',
+      } : null
+    }
+  },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GoogleProvider({
