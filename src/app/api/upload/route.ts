@@ -23,8 +23,8 @@ import {
   setError
 } from '@/lib/upload-status';
 
-// กำหนดค่า ffmpeg path /usr/bin/ffmpeg
-ffmpeg.setFfmpegPath('/opt/homebrew/bin/ffmpeg');
+// กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
+ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 
 // สร้าง S3 client
 const s3Client = new S3Client({

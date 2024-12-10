@@ -1,0 +1,10 @@
+FROM nginx:alpine
+
+# ลบการตั้งค่า default
+RUN rm /etc/nginx/conf.d/default.conf
+
+# คัดลอกไฟล์การตั้งค่า nginx
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80 443 

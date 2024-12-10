@@ -7,11 +7,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+    command: sh -c "./wait-for-it.sh db:5432 -- npx prisma migrate deploy && npm run start"
     volumes:
-      - .:/app
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./prisma:/app/prisma
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./next.config.js:/app/next.config.js
     environment:
-      DATABASE_URL: postgres://Clustra:123456@localhost:5432/clustra-db
-      NEXT_PUBLIC_API_URL: 
+      DATABASE_URL: postgres://Clustra:123456@db:5432/clustra-db
+      NEXT_PUBLIC_API_URL: https://clustra.tech
+      NEXT_PUBLIC_APP_URL: https://clustra.tech
       AWS_ACCESS_KEY_ID: AKIAWQUOZWE6B7U75K4H
       AWS_SECRET_ACCESS_KEY: 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
       AWS_BUCKET_NAME: clustra-bucket-2
@@ -23,7 +32,7 @@ services:
       CLOUDFRONT_RESPONSE_HEADERS_POLICY_ID: 6ab76114-9895-4d31-828a-5ec53fe5ba63
       GOOGLE_CLIENT_ID: 809132542468-pb096rh1fp6p9r8gpd7m8b79c8jqinpi.apps.googleusercontent.com
       GOOGLE_CLIENT_SECRET: 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
-      NEXTAUTH_URL: 
+      NEXTAUTH_URL: https://clustra.tech
       NEXTAUTH_SECRET: Z8Aqrayk+3755+fTS8sYYjZ5/ITuAPPmK9yNU3DQ9bc=
       STRIPE_SECRET_KEY: sk_test_51QRb5aH4oklz2WpCpJu337a30yF1sC9Ah7XdZIVKfSs1VS5ZcxKYKgVJRJBsixc7p2AMnoh5hLQszcA1p8qxue1l00Sxqc0Mts
       STRIPE_WEBHOOK_SECRET: 
