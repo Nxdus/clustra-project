@@ -49,6 +49,8 @@ model User {
   sessions          Session[]
   videos            Video[]
   allowedDomains    AllowedDomain[]
+  stripeCustomerId  String?
+  stripeSubscriptionId String? @unique
 }
 
 model Video {
