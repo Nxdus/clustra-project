@@ -64,13 +64,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - nginx
-    command: >
-      certonly --webroot 
-      --webroot-path=/data/letsencrypt 
-      --email paitong1550@gmail.com
-      --agree-tos 
-      --no-eff-email
-      -d clustra.tech
+    command: certonly --webroot --webroot-path=/var/www/certbot -d clustra.tech
 
   db:
     image: postgres:13
