@@ -69,7 +69,6 @@ services:
       --agree-tos 
       --no-eff-email 
       --force-renewal
-      --staging 
       -d clustra.tech
 
   db:
