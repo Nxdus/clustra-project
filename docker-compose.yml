@@ -16,7 +16,7 @@ services:
     volumes:
       - ./src:/app/src:ro
       - ./public:/app/public:ro
-      - ./prisma:/app/prisma:rw
+      - ./prisma:/app/prisma:ro
     environment:
       DATABASE_URL: postgres://Clustra:123456@db:5432/clustra-db
       NEXT_PUBLIC_API_URL: http://localhost:3000
