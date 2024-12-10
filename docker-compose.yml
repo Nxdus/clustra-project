@@ -70,7 +70,6 @@ services:
       --agree-tos 
       --no-eff-email
       -d clustra.tech
-      --staging
 
   db:
     image: postgres:13
