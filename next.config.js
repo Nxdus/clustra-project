@@ -5,7 +5,7 @@ const nextConfig = {
   // ปิดการสร้าง source maps ในโหมด production
   productionBrowserSourceMaps: false,
   images: {
-    domains: ['your-domain.com'], // แก้ไขตามที่คุณใช้งาน
+    domains: ['clustra.tech'], // แก้ไขตามที่คุณใช้งาน
   },
 }
 
