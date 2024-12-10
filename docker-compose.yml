@@ -55,6 +55,7 @@ services:
       - certs-data:/data/letsencrypt
     depends_on:
       - app
+      - certbot
 
   certbot:
     image: certbot/certbot
