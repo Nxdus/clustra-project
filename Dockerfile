@@ -32,6 +32,9 @@ COPY --from=builder /app ./
 # Install bash for using wait-for-it
 RUN apk add --no-cache bash
 
+# Install libssl
+RUN apk add --no-cache openssl1.1-compat
+
 EXPOSE 3000
 
 # Run the application with wait-for-it to wait for MySQL
