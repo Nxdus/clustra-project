@@ -3,15 +3,11 @@ version: '3.8'
 services:
 
   web:
-    build:
-      context: .
-      args:
-        - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-        - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+    build: .
     environment:
       - DATABASE_URL=postgres://Clustra:123456@db:5432/clustra-db
-      - NEXT_PUBLIC_API_URL=http://localhost:3000
-      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NEXT_PUBLIC_API_URL=https://clustra.tech
+      - NEXT_PUBLIC_APP_URL=https://clustra.tech
       - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51QRb5aH4oklz2WpCpJu337a30yF1sC9Ah7XdZIVKfSs1VS5ZcxKYKgVJRJBsixc7p2AMnoh5hLQszcA1p8qxue1l00Sxqc0Mts
       - AWS_ACCESS_KEY_ID=AKIAWQUOZWE6B7U75K4H
       - AWS_SECRET_ACCESS_KEY=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
