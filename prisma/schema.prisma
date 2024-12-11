@@ -75,7 +75,6 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
-
 model AllowedDomain {
   id        String   @id @default(cuid())
   domain    String
@@ -86,3 +85,4 @@ model AllowedDomain {
 
   @@unique([domain, userId])
 }
+

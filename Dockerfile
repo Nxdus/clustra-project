@@ -9,12 +9,9 @@ ENV STRIPE_SECRET_KEY=sk_test_51QRb5aH4oklz2WpCpJu337a30yF1sC9Ah7XdZIVKfSs1VS5Zc
 ENV NEXT_PUBLIC_API_URL=https://clustra.tech
 ENV NEXT_PUBLIC_APP_URL=https://clustra.tech
 
-# Copy package files
+# Install dependencies
 COPY package*.json ./
-
-# ติดตั้ง dependencies ทั้งหมดรวมถึง devDependencies
 RUN npm install
-RUN npm install -D autoprefixer postcss tailwindcss
 
 # Copy all files
 COPY . .
@@ -25,20 +22,12 @@ RUN apk add --no-cache openssl
 RUN npx prisma generate
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine
-
-WORKDIR /app
-
-# ติดตั้ง dependencies ที่จำเป็นใน production stage
-RUN apk add --no-cache openssl
-
 # Copy ทุกไฟล์จาก builder stage
 COPY --from=builder /app/ ./
 
 # Install production dependencies only
-RUN npm install --production
+RUN npm prune --production
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["./wait-for-it.sh", "db:5432", "--", "npm", "run", "start"]
