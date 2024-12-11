@@ -33,7 +33,7 @@ WORKDIR /app
 COPY --from=builder /app/ ./
 
 # Install production dependencies only
-RUN npm prune --production
+RUN npm install --production
 
 EXPOSE 3000
 
