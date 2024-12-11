@@ -45,11 +45,15 @@ services:
     restart: always
 
   certbot:
-    image: certbot/certbot
+    image: certbot/dns-cloudflare
     volumes:
       - ./nginx/certbot:/etc/letsencrypt
       - ./nginx/www:/usr/share/nginx/html
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 6h & wait $${!}; certbot renew; done;'"
+      - ./cloudflare.ini:/root/.secrets/cloudflare.ini
+    environment:
+      - CF_API_EMAIL=paitong1550@gmail.com
+      - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
+    command: certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d *.clustra.tech --email your-email@example.com --agree-tos --non-interactive
 
   db:
     image: postgres:13

@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { useTranslations } from 'next-intl'
 import { UpgradeButton } from "@/components/upgrade-button"
+import Image from 'next/image';
 
 export default function Page() {
     const locale = useLocale()
@@ -85,7 +86,15 @@ export default function Page() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-50 to-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" />
                 <div className="absolute inset-0 opacity-30 bg-[radial-gradient(at_top_right,_#3b82f620_0%,_transparent_50%)]" />
                 <div className="absolute inset-0 opacity-30 bg-[radial-gradient(at_top_left,_#2563eb20_0%,_transparent_50%)]" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-repeat bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+                <div className="absolute inset-0">
+                    <Image
+                        src="/grid.svg"
+                        alt="Grid Background"
+                        fill
+                        priority
+                        className="object-center object-repeat [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
+                    />
+                </div>
 
                 <div className="container relative mx-auto px-4">
                     <div className="max-w-5xl mx-auto text-center space-y-8">
