@@ -14,16 +14,20 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+# ติดตั้ง dependencies ที่จำเป็นสำหรับ Prisma
+RUN apk add --no-cache openssl
+
 RUN npx prisma generate
 RUN npm run build
-
-# เพิ่มการติดตั้ง libssl
-RUN apk add --no-cache openssl1.1-compat
 
 # Production stage
 FROM node:18-alpine
 
 WORKDIR /app
+
+# ติดตั้ง dependencies ที่จำเป็นใน production stage ด้วย
+RUN apk add --no-cache openssl
 
 # Copy necessary files from builder
 COPY --from=builder /app/next.config.ts ./
