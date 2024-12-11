@@ -17,6 +17,9 @@ COPY . .
 RUN npx prisma generate
 RUN npm run build
 
+# เพิ่มการติดตั้ง libssl
+RUN apk add --no-cache openssl1.1-compat
+
 # Production stage
 FROM node:18-alpine
 
