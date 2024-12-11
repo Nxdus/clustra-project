@@ -33,7 +33,7 @@ COPY --from=builder /app ./
 RUN apk add --no-cache bash
 
 # Install libssl
-RUN apk add --no-cache openssl1.1-compat
+RUN apk add --no-cache openssl
 
 EXPOSE 3000
 
