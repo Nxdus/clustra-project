@@ -26,6 +26,8 @@ import {
 // กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
 ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 
+console.log("ffmpeg path passed");
+
 // สร้าง S3 client
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
