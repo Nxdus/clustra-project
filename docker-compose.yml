@@ -53,7 +53,7 @@ services:
     environment:
       - CF_API_EMAIL=paitong1550@gmail.com
       - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
-    command: certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d *.clustra.tech --email paitong1550@gmail.com --agree-tos --non-interactive
+    command: certificates #certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d *.clustra.tech --email paitong1550@gmail.com --agree-tos --non-interactive
 
   db:
     image: postgres:13
