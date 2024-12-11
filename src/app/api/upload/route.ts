@@ -47,6 +47,8 @@ const cloudFrontClient = new CloudFrontClient({
   endpoint: process.env.CLOUDFRONT_ENDPOINT
 });
 
+console.log(s3Client, cloudFrontClient);
+
 // Utility functions
 const deleteS3Folder = async (prefix: string, fileName: string, segmentFiles: string[]) => {
   try {
@@ -102,6 +104,7 @@ const calculateTotalSize = (m3u8Buffer: Buffer, segmentFiles: string[], outputDi
 // Main API Handler
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
+
   if (!session?.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -187,6 +190,7 @@ export async function POST(req: Request) {
         ])
         .on('progress', (progress) => {
           if (isAborted) return;
+          console.log(progress);
           updateProgress(uploadId, Math.round(progress.percent || 0), 'processing');
         })
         .on('end', () => {
