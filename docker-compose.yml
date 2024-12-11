@@ -53,18 +53,8 @@ services:
     environment:
       - CF_API_EMAIL=paitong1550@gmail.com
       - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
-    command: certificates
-    entrypoint: |
-      /bin/sh -c '
-      trap exit TERM;
-      while :; do
-        # ตรวจสอบว่าเป็นวันที่ 1 หรือ 15 ของเดือนหรือไม่
-        if [ "$(date +\%d)" = "01" ] || [ "$(date +\%d)" = "15" ]; then
-          certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet && nginx -s reload;
-        fi
-        # รอ 24 ชั่วโมงก่อนตรวจสอบอีกครั้ง
-        sleep 24h & wait ${!};
-      done'
+    command: certificates #certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d *.clustra.tech --email paitong1550@gmail.com --agree-tos --non-interactive
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet && nginx -s reload; sleep 3d & wait $${!}; done;'"
     depends_on:
       - nginx
 
