@@ -1,49 +1,38 @@
-# Build stage
+# Step 1: Build the application
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# รับ build arguments
-ARG STRIPE_SECRET_KEY
-ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-
-# กำหนดค่า environment variables สำหรับ build time
-ENV STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY
-ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-
-# ติดตั้ง OpenSSL และ dependencies ที่จำเป็น
-RUN apk add --no-cache openssl
-
-# Copy package files และติดตั้ง dependencies
-COPY package*.json ./
+# Install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy source files และ build
+# Copy source code
 COPY . .
+
+# Run Prisma generate
 RUN npx prisma generate
+
+# Build the application
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS runner
+# Download wait-for-it.sh
+RUN apk add --no-cache curl bash && \
+    curl -o wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh && \
+    chmod +x wait-for-it.sh
+
+# Step 2: Run the application
+FROM node:18-alpine
 
 WORKDIR /app
 
-# ติดตั้ง OpenSSL
-RUN apk add --no-cache openssl
+# Copy application and wait-for-it script from builder stage
+COPY --from=builder /app ./
 
-# Copy เฉพาะไฟล์ที่จำเป็นจาก builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/prisma ./prisma
-
-# ติดตั้ง production dependencies
-RUN npm ci --only=production
-
-# Copy wait-for-it script
-COPY wait-for-it.sh ./
-RUN chmod +x wait-for-it.sh
+# Install bash for using wait-for-it
+RUN apk add --no-cache bash
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+# Run the application with wait-for-it to wait for MySQL
+CMD ["./wait-for-it.sh", "db:5432", "--", "npm", "run", "start"]
