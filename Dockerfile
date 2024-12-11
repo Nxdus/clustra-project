@@ -29,6 +29,9 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# ติดตั้ง dependencies ที่จำเป็นใน production stage
+RUN apk add --no-cache openssl
+
 # Copy ทุกไฟล์จาก builder stage
 COPY --from=builder /app/ ./
 
@@ -37,4 +40,4 @@ RUN npm install --production
 
 EXPOSE 3000
 
-CMD ["./wait-for-it.sh", "db:5432", "--", "npm", "start"]
+CMD ["npm", "start"]
