@@ -48,11 +48,21 @@ services:
       - ./nginx/certbot:/etc/letsencrypt
       - ./nginx/www:/usr/share/nginx/html
       - ./cloudflare.ini:/root/.secrets/cloudflare.ini
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - CF_API_EMAIL=paitong1550@gmail.com
       - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
-    command: certificates #certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d *.clustra.tech --email paitong1550@gmail.com --agree-tos --non-interactive
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet && nginx -s reload; sleep 3d & wait $${!}; done;'"
+    command: certificates
+    entrypoint: |
+      /bin/sh -c '
+      apk add --no-cache docker-cli
+      
+      trap exit TERM
+      while :; do
+        certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet
+        docker exec $(docker ps -q -f name=nginx) nginx -s reload
+        sleep 3d & wait $${!}
+      done'
     depends_on:
       - nginx
 
