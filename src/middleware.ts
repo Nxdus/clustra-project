@@ -37,6 +37,6 @@ export const config = {
     '/((?!api|_next|.*\\..*).*))',
     // Authentication paths
     '/dashboard/:path*',
-    '/upload'
+    '/api/upload'
   ]
 }; 

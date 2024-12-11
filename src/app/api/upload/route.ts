@@ -190,7 +190,7 @@ export async function POST(req: Request) {
         ])
         .on('progress', (progress) => {
           if (isAborted) return;
-          console.log(progress);
+          console.log(`Upload progress: ${progress.percent}%`);
           updateProgress(uploadId, Math.round(progress.percent || 0), 'processing');
         })
         .on('end', () => {
