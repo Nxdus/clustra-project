@@ -14,7 +14,7 @@ COPY package*.json ./
 
 # ติดตั้ง dependencies ทั้งหมดรวมถึง devDependencies
 RUN npm install
-RUN npm install -D autoprefixer postcss tailwindcss @types/postcss-load-config
+RUN npm install -D autoprefixer postcss tailwindcss
 
 # Copy all files
 COPY . .
