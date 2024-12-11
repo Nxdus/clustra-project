@@ -3,7 +3,11 @@ version: '3.8'
 services:
 
   web:
-    build: .
+    build:
+      context: .
+      args:
+        - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+        - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
     environment:
       - DATABASE_URL=postgres://Clustra:123456@db:5432/clustra-db
       - NEXT_PUBLIC_API_URL=http://localhost:3000
@@ -22,8 +26,8 @@ services:
       - GOOGLE_CLIENT_SECRET=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
       - NEXTAUTH_URL=https://clustra.tech
       - NEXTAUTH_SECRET=Z8Aqrayk+3755+fTS8sYYjZ5/ITuAPPmK9yNU3DQ9bc=
-      - STRIPE_SECRET_KEY=sk_test_51QRb5aH4oklz2WpCpJu337a30yF1sC9Ah7XdZIVKfSs1VS5ZcxKYKgVJRJBsixc7p2AMnoh5hLQszcA1p8qxue1l00Sxqc0Mts
-      - STRIPE_PUBLISHABLE_KEY=pk_test_51QRb5aH4oklz2WpCAp8FDVr15dC0m0p9nyIdYm9JFzXnZuzID4yBE0Fz37WqJGOlaNzP7n4uHNn7ttsJsdwE21Yw005CZy1QqN
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
       - STRIPE_WEBHOOK_SECRET=whsec_sUke6wGjxeSMLivtPQJM64KCjwkVR47g
       - STRIPE_MONTHLY_PRICE_ID=price_1QT3mWH4oklz2WpCJX1NC3Yb
       - STRIPE_ANNUAL_PRICE_ID=price_1QT3m4H4oklz2WpC5sGGjR8J
