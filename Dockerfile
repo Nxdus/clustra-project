@@ -11,6 +11,10 @@ ENV NEXT_PUBLIC_APP_URL=https://clustra.tech
 
 # Copy package files
 COPY package*.json ./
+COPY wait-for-it.sh ./
+
+# ให้สิทธิ์การเรียกใช้งาน wait-for-it.sh
+RUN chmod +x wait-for-it.sh
 
 # ติดตั้ง dependencies ทั้งหมดรวมถึง devDependencies
 RUN npm install
@@ -18,26 +22,31 @@ RUN npm install
 # Copy all files
 COPY . .
 
-# ติดตั้ง dependencies ที่จำเป็นสำหรับ Prisma
+# ติดตั้ง dependencies ที่จำเป็นสำหรับ Prisma และ wait-for-it
 RUN apk add --no-cache openssl
 
 RUN npx prisma generate
 RUN npm run build
+
+# Copy start script
+COPY start.sh ./
+RUN chmod +x start.sh
 
 # Production stage
 FROM node:18-alpine
 
 WORKDIR /app
 
-# ติดตั้ง dependencies ที่จำเป็นใน production stage
-RUN apk add --no-cache openssl
+# ติดตั้ง dependencies ที่จำเป็นใน production stage ทั้งหมดในครั้งเดียว
+RUN apk add --no-cache openssl bash
 
 # Copy ทุกไฟล์จาก builder stage
 COPY --from=builder /app/ ./
 
 # Install production dependencies only
-RUN npm install --production
+RUN npm install --production \
+    && chmod +x wait-for-it.sh
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["./start.sh"]

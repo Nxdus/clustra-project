@@ -3,7 +3,7 @@ services:
   web:
     build: .
     environment:
-      - DATABASE_URL=postgres://Clustra:123456@db:5432/clustra-db
+      - DATABASE_URL=postgresql://Clustra:123456@db:5432/clustra-db?schema=public
       - NEXT_PUBLIC_API_URL=https://clustra.tech
       - NEXT_PUBLIC_APP_URL=https://clustra.tech
       - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51QRb5aH4oklz2WpCAp8FDVr15dC0m0p9nyIdYm9JFzXnZuzID4yBE0Fz37WqJGOlaNzP7n4uHNn7ttsJsdwE21Yw005CZy1QqN
@@ -26,7 +26,9 @@ services:
       - STRIPE_MONTHLY_PRICE_ID=price_1QT3mWH4oklz2WpCJX1NC3Yb
       - STRIPE_ANNUAL_PRICE_ID=price_1QT3m4H4oklz2WpC5sGGjR8J
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
   nginx:
     image: nginx:latest
@@ -74,6 +76,11 @@ services:
       POSTGRES_DB: clustra-db
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U Clustra"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata:
