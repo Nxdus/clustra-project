@@ -20,8 +20,11 @@ import { useTranslations } from 'next-intl'
 
 const fileSchema = z.object({
   file: z
-    .instanceof(File)
-    .refine((file) => ["video/mp4"].includes(file.type), {
+    .any()
+    .refine((file): file is File => file instanceof File, {
+      message: "ต้องเป็นไฟล์เท่านั้น",
+    })
+    .refine((file: File) => ["video/mp4"].includes(file.type), {
       message: "ไฟล์ต้องเป็น MP4 เท่านั้น",
     }),
 });
