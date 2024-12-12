@@ -24,7 +24,7 @@ import {
 } from '@/lib/upload-status';
 
 // กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
-ffmpeg.setFfmpegPath('ffmpeg');
+ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 
 // สร้าง S3 client
 const s3Client = new S3Client({
@@ -171,8 +171,8 @@ export async function POST(req: Request) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    console.log(ffmpeg())
-
+    console.log(filePath)
+    console.log(outputPath)
     // 6. แปลงไฟล์ด้วย ffmpeg
     await new Promise((resolve, reject) => {
       let isAborted = false;
