@@ -16,9 +16,17 @@ RUN npm install
 
 COPY . .
 
+# ติดตั้ง openssl สำหรับ prisma
 RUN apk add --no-cache openssl
+
+# Generate Prisma Client
 RUN npx prisma generate
+
+# Build Next.js
 RUN npm run build
+
+# คอมไพล์ไฟล์ worker (process-jobs.ts -> .js) ด้วย tsc
+RUN npx tsc src/worker/process-jobs.ts --outDir dist/worker
 
 COPY start.sh ./
 RUN chmod +x start.sh
@@ -29,18 +37,18 @@ FROM node:18-alpine
 WORKDIR /app
 
 RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata
-
-# ติดตั้ง cron
 RUN apk add --no-cache cronie
 
-# Copy files from builder
+# Copy from builder
 COPY --from=builder /app/ ./
 
 # Install production dependencies
-RUN npm install --production \
-    && chmod +x wait-for-it.sh
+RUN npm install --production && chmod +x wait-for-it.sh
 
-# สร้างไฟล์ cron job
+# สร้างโฟลเดอร์ logs เพื่อเก็บไฟล์ log ของ cron
+RUN mkdir -p /app/logs
+
+# สร้างไฟล์ cron job (รันทุก 1 นาที)
 RUN echo "* * * * * node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 
 # สร้าง supervisor config เพื่อรัน cron และ start.sh พร้อมกัน
