@@ -30,30 +30,27 @@ COPY --from=builder /app/ ./
 RUN npm install --production && chmod +x wait-for-it.sh
 
 RUN mkdir -p /app/logs
-RUN mkdir -p /var/spool/cron/crontabs
-RUN chown root:root /var/spool/cron/crontabs
-RUN chown -R root:root /app/logs
+RUN chown root:root /app/logs
 
-# ตั้งค่า cron job อย่างง่าย
-RUN echo "* * * * * /bin/echo hello >> /app/logs/test.log 2>&1" > /var/spool/cron/crontabs/root
-RUN chmod 600 /var/spool/cron/crontabs/root && chown root:root /var/spool/cron/crontabs/root
+# ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
+RUN echo "* * * * * echo hello >> /app/logs/test.log 2>&1" > /etc/crontabs/root
+RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
 RUN mkdir -p /etc/supervisor/conf.d
+# เขียน Supervisor config ด้วย echo ทีละบรรทัด
+RUN echo "[supervisord]" > /etc/supervisor/conf.d/supervisord.conf
+RUN echo "nodaemon=true" >> /etc/supervisor/conf.d/supervisord.conf
 
-# เขียน Supervisor config แบบแยกบรรทัดชัดเจน
-RUN echo "[supervisord]" > /etc/supervisor/conf.d/supervisord.conf && \
-    echo "nodaemon=true" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "[program:cron]" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "command=/usr/sbin/crond -f -l 2" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
 
-RUN echo "[program:cron]" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "command=/usr/sbin/crond -n -l 2" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
-
-RUN echo "[program:nextjs]" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "command=./start.sh" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "directory=/app" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf && \
-    echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "[program:nextjs]" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "command=./start.sh" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "directory=/app" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 3000
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
