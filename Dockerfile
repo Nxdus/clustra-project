@@ -25,9 +25,6 @@ RUN npx prisma generate
 # Build Next.js
 RUN npm run build
 
-# คอมไพล์ไฟล์ worker (process-jobs.ts -> .js) ด้วย tsc
-RUN npx tsc src/worker/process-jobs.ts --outDir dist/worker
-
 COPY start.sh ./
 RUN chmod +x start.sh
 
