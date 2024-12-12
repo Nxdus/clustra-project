@@ -2,6 +2,9 @@ services:
 
   web:
     build: .
+    volumes:
+      - ./public/uploads:/app/public/uploads
+      - ./public/converted:/app/public/converted
     environment:
       - DATABASE_URL=postgresql://Clustra:123456@db:5432/clustra-db?schema=public
       - NEXT_PUBLIC_API_URL=https://clustra.tech

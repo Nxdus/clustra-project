@@ -38,7 +38,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # ติดตั้ง dependencies ที่จำเป็นใน production stage ทั้งหมดในครั้งเดียว
-RUN apk add --no-cache openssl bash
+RUN apk add --no-cache ffmpeg openssl bash
 
 # Copy ทุกไฟล์จาก builder stage
 COPY --from=builder /app/ ./

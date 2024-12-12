@@ -24,7 +24,7 @@ import {
 } from '@/lib/upload-status';
 
 // กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
-ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
+ffmpeg.setFfmpegPath('ffmpeg');
 
 console.log("ffmpeg path passed");
 
@@ -365,7 +365,10 @@ export async function POST(req: Request) {
       });
 
     } catch (error) {
-      console.error('Error during file upload:', error);
+      console.error('Detailed error:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       throw error;
     }
 
