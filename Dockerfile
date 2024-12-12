@@ -24,7 +24,7 @@ RUN chmod +x start.sh
 FROM node:18-alpine
 WORKDIR /app
 
-RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata cronie
+RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata cronie coreutils
 
 COPY --from=builder /app/ ./
 RUN npm install --production && chmod +x wait-for-it.sh
@@ -42,7 +42,7 @@ RUN echo "[supervisord]" > /etc/supervisor/conf.d/supervisord.conf
 RUN echo "nodaemon=true" >> /etc/supervisor/conf.d/supervisord.conf
 
 RUN echo "[program:cron]" >> /etc/supervisor/conf.d/supervisord.conf
-RUN echo "command=/usr/sbin/crond -f -l 2" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "command=/usr/sbin/crond -n" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
 
