@@ -26,8 +26,6 @@ import {
 // กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
 ffmpeg.setFfmpegPath('ffmpeg');
 
-console.log("ffmpeg path passed");
-
 // สร้าง S3 client
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -46,8 +44,6 @@ const cloudFrontClient = new CloudFrontClient({
   },
   endpoint: process.env.CLOUDFRONT_ENDPOINT
 });
-
-console.log(s3Client, cloudFrontClient);
 
 // Utility functions
 const deleteS3Folder = async (prefix: string, fileName: string, segmentFiles: string[]) => {
@@ -175,6 +171,8 @@ export async function POST(req: Request) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
+    console.log(ffmpeg())
+
     // 6. แปลงไฟล์ด้วย ffmpeg
     await new Promise((resolve, reject) => {
       let isAborted = false;
@@ -190,7 +188,6 @@ export async function POST(req: Request) {
         ])
         .on('progress', (progress) => {
           if (isAborted) return;
-          console.log(`Upload progress: ${progress.percent}%`);
           updateProgress(uploadId, Math.round(progress.percent || 0), 'processing');
         })
         .on('end', () => {
