@@ -20,7 +20,10 @@ RUN npm run build
 COPY start.sh ./
 RUN chmod +x start.sh
 
-RUN npx tsc src/worker/process-jobs.ts --outDir dist/worker
+RUN ls -al ./src/worker
+
+# คอมไพล์เฉพาะไฟล์ process-jobs.ts
+RUN npx tsc ./src/worker/process-jobs.ts --outDir dist/worker
 
 # Production stage
 FROM node:18-alpine
