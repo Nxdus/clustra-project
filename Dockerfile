@@ -16,13 +16,8 @@ RUN npm install
 
 COPY . .
 
-# ติดตั้ง openssl สำหรับ prisma
 RUN apk add --no-cache openssl
-
-# Generate Prisma Client
 RUN npx prisma generate
-
-# Build Next.js
 RUN npm run build
 
 COPY start.sh ./
@@ -33,38 +28,30 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata
-RUN apk add --no-cache cronie
+RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata cronie
 
-# Copy จาก builder stage มาทั้งหมด
 COPY --from=builder /app/ ./
 
-# ติดตั้ง production dependencies
 RUN npm install --production && chmod +x wait-for-it.sh
 
-# สร้างโฟลเดอร์ logs เก็บไฟล์ log ของ cron
+# สร้างโฟลเดอร์ logs และ crontabs
 RUN mkdir -p /app/logs
-
-# สร้างโฟลเดอร์สำหรับ crontabs
 RUN mkdir -p /var/spool/cron/crontabs
 
-# หาตำแหน่ง node
-# ปกติ node ใน official node image จะอยู่ที่ /usr/local/bin/node
-# ใช้ absolute path เพื่อให้ cron เจอ node แน่นอน
+# ตรวจสอบตำแหน่ง node
 RUN which node
 
-# เขียนคำสั่ง cron job ลงใน crontab ของ root (รันทุก 1 นาที)
-# ใช้ absolute path ของ node (/usr/local/bin/node) เพื่อป้องกัน PATH ปัญหา
+# เขียน cron job (ทุก 1 นาที) และตั้งสิทธิ์
 RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /var/spool/cron/crontabs/root
-
-# ตั้งสิทธิ์ไฟล์ crontab เป็น 600
 RUN chmod 600 /var/spool/cron/crontabs/root
+RUN chown root:root /var/spool/cron/crontabs/root
 
-# สร้าง supervisor config เพื่อรัน cron และ start.sh พร้อมกัน
+# สร้าง Supervisor config
 RUN mkdir -p /etc/supervisor/conf.d
 RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisor/conf.d/supervisord.conf
-RUN echo -e "[program:cron]\ncommand=/usr/sbin/crond -f -l 2\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
-RUN echo -e "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
+# หากยังมีปัญหา cron ลองเพิ่ม -d 8 เพื่อติดตาม debug: command=/usr/sbin/crond -f -l 2 -d 8
+RUN echo -e "[program:cron]\ncommand=/usr/sbin/crond -f -l 2 -d 8\nautostart=true\nautorestart=true\nuser=root\n" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\nuser=root\n" >> /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 3000
 
