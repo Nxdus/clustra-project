@@ -21,7 +21,6 @@ export async function POST(req: Request) {
 
   const formData = await req.formData();
   const file = formData.get('file') as File;
-  const uploadId = formData.get('uploadId') as string;
 
   if (!file || !(file instanceof Blob)) {
     return NextResponse.json({ error: 'Invalid file' }, { status: 400 });

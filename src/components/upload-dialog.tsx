@@ -108,10 +108,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
     setUploadStatus('pending');
     setUploadProgress(0);
 
-    const uploadId = Date.now().toString();
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("uploadId", uploadId);
 
     try {
       const response = await fetch("/api/upload", {
@@ -132,14 +130,16 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         description: "ระบบกำลังประมวลผลไฟล์ของคุณ กรุณารอสักครู่..."
       });
 
-    } catch (err: any) {
-      toast({
-        title: "เกิดข้อผิดพลาด",
-        description: err.message,
-        variant: "destructive"
-      });
-      setIsUploading(false);
-      setJobId(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast({
+          title: "เกิดข้อผิดพลาด",
+          description: err.message,
+          variant: "destructive"
+        });
+        setIsUploading(false);
+        setJobId(null);
+      }
     } finally {
       setFile(null);
     }
@@ -235,7 +235,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
                 className="h-3 rounded-lg [&>div]:bg-blue-500"
               />
               <p className="text-sm text-center text-muted-foreground">
-                กำลังประมวลผล... {Math.round(uploadProgress)}%
+                กำลังประมวลผล... {Math.round(uploadProgress)}% | {uploadStatus}
               </p>
             </div>
           )}
