@@ -23,10 +23,8 @@ import {
   setError
 } from '@/lib/upload-status';
 
-// กำหนดค่า ffmpeg path /usr/bin/ffmpeg | /opt/homebrew/bin/ffmpeg
 ffmpeg.setFfmpegPath('/usr/bin/ffmpeg');
 
-// สร้าง S3 client
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -35,7 +33,6 @@ const s3Client = new S3Client({
   },
 });
 
-// สร้าง CloudFront client
 const cloudFrontClient = new CloudFrontClient({
   region: process.env.AWS_REGION!,
   credentials: {
@@ -45,16 +42,13 @@ const cloudFrontClient = new CloudFrontClient({
   endpoint: process.env.CLOUDFRONT_ENDPOINT
 });
 
-// Utility functions
 const deleteS3Folder = async (prefix: string, fileName: string, segmentFiles: string[]) => {
   try {
-    console.log(`\x1b[33m⚠\x1b[0m ลำลังลบโฟลเดอร์ ${prefix} จาก S3`);
+    console.log(`\x1b[33m⚠\x1b[0m Deleting folder ${prefix} from S3`);
 
     const objectsToDelete = [
       { Key: `${prefix}/${fileName}.m3u8` },
-      ...segmentFiles.map(segment => ({
-        Key: `${prefix}/${segment}`
-      }))
+      ...segmentFiles.map(segment => ({ Key: `${prefix}/${segment}` }))
     ];
 
     const deleteCommand = new DeleteObjectsCommand({
@@ -70,34 +64,31 @@ const deleteS3Folder = async (prefix: string, fileName: string, segmentFiles: st
 };
 
 const uploadToS3WithRetry = async (params: PutObjectCommandInput, retries = 3) => {
-  try {
-    await s3Client.send(new PutObjectCommand(params));
-  } catch (error) {
-    if (retries > 0) {
+  while (retries > 0) {
+    try {
+      await s3Client.send(new PutObjectCommand(params));
+      return;
+    } catch (error) {
+      retries -= 1;
+      if (retries === 0) {
+        throw error;
+      }
       await new Promise(resolve => setTimeout(resolve, 1000));
-      return uploadToS3WithRetry(params, retries - 1);
     }
-    throw error;
   }
 };
 
-// เพิ่มฟังก์ชั่นสำหรับคำนวณขนาดไฟล์
 const calculateTotalSize = (m3u8Buffer: Buffer, segmentFiles: string[], outputDir: string): number => {
-  let totalSize = m3u8Buffer.length; // ขนาดของไฟล์ m3u8
-  
-  // รวมขนาดของไฟล์ segment ทั้งหมด
-  for (const segmentFile of segmentFiles) {
+  let totalSize = m3u8Buffer.length;
+  segmentFiles.forEach(segmentFile => {
     const segmentPath = path.join(outputDir, segmentFile);
     if (fs.existsSync(segmentPath)) {
-      const stats = fs.statSync(segmentPath);
-      totalSize += stats.size;
+      totalSize += fs.statSync(segmentPath).size;
     }
-  }
-  
+  });
   return totalSize;
 };
 
-// Main API Handler
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
 
@@ -110,33 +101,26 @@ export async function POST(req: Request) {
   let currentUploadId: string | null = null;
 
   try {
-    // 1. รับและตรวจสอบข้อมูล
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const uploadId = formData.get('uploadId') as string;
     currentUploadId = uploadId;
 
     if (!file || !(file instanceof Blob)) {
-      return NextResponse.json({ error: 'ไฟล์ไม่ถูกต้อง' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid file' }, { status: 400 });
     }
 
-    try {      
-      // อัพเดทจำนวนการอัพโหลดรายเดือน
+    try {
       await prisma.user.update({
         where: { id: session.user.id },
         data: {
-          monthlyUploads: {
-            increment: 1
-          }
+          monthlyUploads: { increment: 1 }
         }
       });
     } catch (error) {
-      return NextResponse.json({ 
-        error: error instanceof Error ? error.message : 'เกิดข้อผิดพลาดในการตรวจสอบข้อจำกัด' 
-      }, { status: 400 });
+      return NextResponse.json({ error: error instanceof Error ? error.message : 'Error updating limits' }, { status: 400 });
     }
 
-    // 2. สร้างชื่อไฟล์และบันทึกวิดีโอใน Database
     const fileName = `${randomBytes(6).toString('hex')}`;
     const encodedFileName = encodeURIComponent(fileName);
 
@@ -150,7 +134,6 @@ export async function POST(req: Request) {
       }
     });
 
-    // 3. ตั้งค่า cleanup function
     cleanup = async () => {
       try {
         await prisma.video.delete({ where: { id: pendingVideo.id } });
@@ -159,7 +142,6 @@ export async function POST(req: Request) {
       }
     };
 
-    // 5. เตรียมไฟล์และโฟลเดอร์
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const filePath = path.join(process.cwd(), 'public/uploads', encodedFileName);
@@ -171,9 +153,9 @@ export async function POST(req: Request) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    console.log(filePath)
-    console.log(outputPath)
-    // 6. แปลงไฟล์ด้วย ffmpeg
+    console.log(filePath);
+    console.log(outputPath);
+
     await new Promise((resolve, reject) => {
       let isAborted = false;
       const process = ffmpeg(filePath)
@@ -188,131 +170,78 @@ export async function POST(req: Request) {
         ])
         .on('progress', (progress) => {
           if (isAborted) return;
+          console.log(uploadId, Math.round(progress.percent || 0), 'processing')
           updateProgress(uploadId, Math.round(progress.percent || 0), 'processing');
         })
         .on('end', () => {
-          if (isAborted) return;
-          updateProgress(uploadId, 100, 'processing');
-          resolve('');
+          if (!isAborted) resolve('');
         })
         .on('error', (err) => {
-          if (isAborted) return;
-          setError(uploadId, err.message);
-          reject(err);
+          if (!isAborted) reject(err);
         });
 
       process.run();
 
       signal?.addEventListener('abort', () => {
         isAborted = true;
-        if (process) {
-          try {
-            process.kill('SIGKILL');
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-            if (fs.existsSync(outputDir)) fs.rmSync(outputDir, { recursive: true, force: true });
-            if (cleanup) cleanup();
-
-            console.log(`\x1b[33m⚠\x1b[0m ${fileName} | ยกเลิกการแปลงไฟล์`);
-
-            clearProgress(uploadId);
-            resolve('aborted'); // ส่งสถานะ aborted กลับ
-
-          } catch (err) {
-            console.error('Error during abort:', err);
-          }
-        }
+        process.kill('SIGKILL');
+        fs.existsSync(filePath) && fs.unlinkSync(filePath);
+        fs.existsSync(outputDir) && fs.rmSync(outputDir, { recursive: true, force: true });
+        cleanup?.();
+        clearProgress(uploadId);
+        resolve('aborted');
       });
     });
 
     if (signal?.aborted) {
-      return NextResponse.json({
-        status: 'aborted',
-        message: 'การแปลงฟล์ถูกยกเลิก'
-      });
+      return NextResponse.json({ status: 'aborted', message: 'Conversion aborted' });
     }
 
-    // 7. อัพโหดไฟล์ไปยัง S3
     if (!fs.existsSync(outputPath)) {
-      throw new Error(`ไม่พบไฟล์ m3u8 ที่ ${outputPath}`);
+      throw new Error(`M3U8 file not found at ${outputPath}`);
     }
 
-    if (!fs.existsSync(outputDir)) {
-      throw new Error(`ไม่พบโฟลเดอร์ ${outputDir}`);
+    const m3u8FileBuffer = fs.readFileSync(outputPath);
+    const segmentFiles = fs.readdirSync(outputDir).filter(file => file.endsWith('.ts'));
+
+    if (segmentFiles.length === 0) {
+      throw new Error('No segment files found (.ts)');
     }
 
-    try {
-      const m3u8FileBuffer = fs.readFileSync(outputPath);
-      const segmentFiles = fs.readdirSync(outputDir).filter(file => file.endsWith('.ts'));
-      
-      if (segmentFiles.length === 0) {
-        throw new Error('ไม่พบไฟล์ segment (.ts)');
-      }
+    const totalFileSize = calculateTotalSize(m3u8FileBuffer, segmentFiles, outputDir);
 
-      // คำนวณจนาดไฟล์ทั้งหมดที่จะอัพโหลดไปยัง S3
-      const totalFileSize = calculateTotalSize(m3u8FileBuffer, segmentFiles, outputDir);
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { totalStorageUsed: { increment: totalFileSize } }
+    });
 
-      // อัพเดทขนาดไฟล์ในฐานข้อมูล
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: {
-          totalStorageUsed: {
-            increment: totalFileSize
-          }
-        }
-      });
+    await prisma.video.update({
+      where: { id: pendingVideo.id },
+      data: { fileSize: totalFileSize }
+    });
 
-      await prisma.video.update({
-        where: { id: pendingVideo.id },
-        data: {
-          fileSize: totalFileSize
-        }
-      });
+    const totalFiles = segmentFiles.length + 1;
+    let uploadedFiles = 0;
 
-      // คำนวณจำนวนไฟล์ทั้งหมดที่ต้องอัพโหลด (m3u8 + segments)
-      const totalFiles = segmentFiles.length + 1;
-      let uploadedFiles = 0;
+    await uploadToS3WithRetry({
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Key: `converted/${encodedFileName}/${encodedFileName}.m3u8`,
+      Body: m3u8FileBuffer,
+      ContentType: 'application/vnd.apple.mpegurl',
+      ACL: ObjectCannedACL.private
+    });
 
-      // ตรวจสอบ signal aborted ก่อนเริมอัพโหลด
+    uploadedFiles++;
+    updateProgress(uploadId, Math.round((uploadedFiles / totalFiles) * 100), 'uploading');
+
+    for (const segmentFile of segmentFiles) {
+      const segmentFilePath = path.join(outputDir, segmentFile);
       if (signal?.aborted) {
-        console.log(`\x1b[33m⚠\x1b[0m ${fileName} | ยกเลิกการอัพโหลด่อนเริ่มต้น`);
-        return NextResponse.json({
-          status: 'aborted',
-          message: 'การอัพโหลดถูกยกเลิก'
-        });
+        await deleteS3Folder(`converted/${encodedFileName}`, encodedFileName, segmentFiles);
+        return NextResponse.json({ status: 'aborted', message: 'Upload aborted' });
       }
 
-      // อัพโหลด m3u8 file
-      await uploadToS3WithRetry({
-        Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: `converted/${encodedFileName}/${encodedFileName}.m3u8`,
-        Body: m3u8FileBuffer,
-        ContentType: 'application/vnd.apple.mpegurl',
-        ACL: ObjectCannedACL.private
-      });
-      
-      uploadedFiles++;
-      updateProgress(uploadId, Math.round((uploadedFiles / totalFiles) * 100), 'uploading');
-
-      // อัพโหลด segments
-      for (const segmentFile of segmentFiles) {
-        // ตรวจสอบ signal aborted ก่อนอัพโหลดแต่ละ segment
-        if (signal?.aborted) {
-          console.log(`\x1b[33m⚠\x1b[0m ${fileName} | ยกเลิกการอัพโหลดระหว่างทาง`);
-          // ลบไฟล์ที่อัพโหลดไปแล้วบน S3
-          await deleteS3Folder(`converted/${encodedFileName}`, encodedFileName, segmentFiles);
-
-          return NextResponse.json({
-            status: 'aborted',
-            message: 'การอัพโหลดถูกยกเลิก'
-          });
-        }
-
-        const segmentFilePath = path.join(outputDir, segmentFile);
-        if (!fs.existsSync(segmentFilePath)) {
-          console.warn(`ไฟล์ segment ไม่พบ: ${segmentFilePath}`);
-          continue;
-        }
-
+      if (fs.existsSync(segmentFilePath)) {
         await uploadToS3WithRetry({
           Bucket: process.env.AWS_BUCKET_NAME!,
           Key: `converted/${encodedFileName}/${segmentFile}`,
@@ -320,59 +249,43 @@ export async function POST(req: Request) {
           ContentType: 'video/MP2T',
           ACL: ObjectCannedACL.private
         });
-        
+
         uploadedFiles++;
         updateProgress(uploadId, Math.round((uploadedFiles / totalFiles) * 100), 'uploading');
       }
-
-      updateProgress(uploadId, 100, 'completed');
-
-      // 8. ทความสะอาดไฟล์ชั่วคราว
-      fs.unlinkSync(filePath);
-      fs.rmSync(outputDir, { recursive: true, force: true });
-
-      // 9. อัพเดทสถานะวิดีโอ
-      await prisma.video.update({
-        where: { id: pendingVideo.id },
-        data: { status: 'COMPLETED' }
-      });
-
-      // 10. Invalidate CloudFront cache
-      try {
-        await cloudFrontClient.send(new CreateInvalidationCommand({
-          DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID!,
-          InvalidationBatch: {
-            CallerReference: String(Date.now()),
-            Paths: {
-              Quantity: 1,
-              Items: [`/converted/${encodedFileName}/*`],
-            },
-          },
-        }));
-      } catch (error) {
-        console.error('Error invalidating CloudFront cache:', error);
-      }
-
-      // 11. เคลียร์สถานะและส่งผลลัพธ์
-      clearProgress(uploadId);
-      return NextResponse.json({
-        message: 'ไฟล์ถูกแปลงเป็น m3u8 เรียบร้อยแล้ว',
-        videoId: pendingVideo.id,
-        m3u8Url: pendingVideo.url
-      });
-
-    } catch (error) {
-      console.error('Detailed error:', {
-        message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-      });
-      throw error;
     }
+
+    updateProgress(uploadId, 100, 'completed');
+
+    fs.unlinkSync(filePath);
+    fs.rmSync(outputDir, { recursive: true, force: true });
+
+    await prisma.video.update({
+      where: { id: pendingVideo.id },
+      data: { status: 'COMPLETED' }
+    });
+
+    try {
+      await cloudFrontClient.send(new CreateInvalidationCommand({
+        DistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID!,
+        InvalidationBatch: {
+          CallerReference: String(Date.now()),
+          Paths: { Quantity: 1, Items: [`/converted/${encodedFileName}/*`] },
+        },
+      }));
+    } catch (error) {
+      console.error('Error invalidating CloudFront cache:', error);
+    }
+
+    clearProgress(uploadId);
+    return NextResponse.json({
+      message: 'File successfully converted to M3U8',
+      videoId: pendingVideo.id,
+      m3u8Url: pendingVideo.url
+    });
 
   } catch (error) {
-    if (currentUploadId) {
-      setError(currentUploadId, error instanceof Error ? error.message : 'Unknown error');
-    }
+    setError(currentUploadId!, error instanceof Error ? error.message : 'Unknown error');
     throw error;
   }
 }
