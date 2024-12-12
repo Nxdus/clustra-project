@@ -33,13 +33,14 @@ RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
 
 # ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
-RUN echo "* * * * * echo hello >> /app/logs/test.log 2>&1" > /etc/crontabs/root
+RUN echo "* * * * * usr/local/bin/node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
 RUN mkdir -p /etc/supervisor/conf.d
 # เขียน Supervisor config ด้วย echo ทีละบรรทัด
 RUN echo "[supervisord]" > /etc/supervisor/conf.d/supervisord.conf
 RUN echo "nodaemon=true" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "user=root" >> /etc/supervisor/conf.d/supervisord.conf
 
 RUN echo "[program:cron]" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "command=/usr/sbin/crond -n" >> /etc/supervisor/conf.d/supervisord.conf
