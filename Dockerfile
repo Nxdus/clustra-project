@@ -50,9 +50,9 @@ RUN echo "* * * * * node /app/dist/worker/process-jobs.js >> /app/logs/process-j
 
 # สร้าง supervisor config เพื่อรัน cron และ start.sh พร้อมกัน
 RUN mkdir -p /etc/supervisor/conf.d
-RUN echo "[supervisord]\nnodaemon=true\n" > /etc/supervisor/conf.d/supervisord.conf
-RUN echo "[program:cron]\ncommand=/usr/sbin/crond -f -l 2\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
-RUN echo "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[program:cron]\ncommand=/usr/sbin/crond -f -l 2\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 3000
 
