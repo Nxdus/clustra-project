@@ -45,8 +45,14 @@ RUN npm install --production && chmod +x wait-for-it.sh
 # สร้างโฟลเดอร์ logs เพื่อเก็บไฟล์ log ของ cron
 RUN mkdir -p /app/logs
 
-# สร้างไฟล์ cron job (รันทุก 1 นาที)
-RUN echo "* * * * * node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
+# สร้างโฟลเดอร์สำหรับ crontabs
+RUN mkdir -p /var/spool/cron/crontabs
+
+# เขียนคำสั่ง cron job ลงใน crontab ของ root (รันทุก 1 นาที)
+RUN echo "* * * * * node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /var/spool/cron/crontabs/root
+
+# ตั้งสิทธิ์ไฟล์ crontab เป็น 600
+RUN chmod 600 /var/spool/cron/crontabs/root
 
 # สร้าง supervisor config เพื่อรัน cron และ start.sh พร้อมกัน
 RUN mkdir -p /etc/supervisor/conf.d
