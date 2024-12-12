@@ -169,15 +169,20 @@ export async function POST(req: Request) {
           path.join(outputDir, `${encodedFileName}-%03d.ts`),
         ])
         .on('progress', (progress) => {
-          if (isAborted) return;
-          console.log(uploadId, Math.round(progress.percent || 0), 'processing')
+          if (isAborted) {
+            return;
+          }
           updateProgress(uploadId, Math.round(progress.percent || 0), 'processing');
         })
         .on('end', () => {
-          if (!isAborted) resolve('');
+          if (!isAborted) {
+            resolve('');
+          }
         })
         .on('error', (err) => {
-          if (!isAborted) reject(err);
+          if (!isAborted) {
+            reject(err);
+          }
         });
 
       process.run();
@@ -185,8 +190,8 @@ export async function POST(req: Request) {
       signal?.addEventListener('abort', () => {
         isAborted = true;
         process.kill('SIGKILL');
-        fs.existsSync(filePath) && fs.unlinkSync(filePath);
-        fs.existsSync(outputDir) && fs.rmSync(outputDir, { recursive: true, force: true });
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        if (fs.existsSync(outputDir)) fs.rmSync(outputDir, { recursive: true, force: true });
         cleanup?.();
         clearProgress(uploadId);
         resolve('aborted');
