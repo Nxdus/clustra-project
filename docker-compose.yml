@@ -80,7 +80,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U Clustra"]
+      test: ["CMD-SHELL", "pg_isready -U Clustra -d clustra-db -h localhost"]
       interval: 5s
       timeout: 5s
       retries: 5
