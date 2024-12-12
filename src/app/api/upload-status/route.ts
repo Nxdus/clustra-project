@@ -1,18 +1,23 @@
 import { NextResponse } from 'next/server';
-import { getUploadStatus } from '@/lib/upload-status';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const uploadId = url.searchParams.get('uploadId');
+  const jobId = url.searchParams.get('jobId');
 
-  if (!uploadId) {
-    return NextResponse.json({ error: 'Upload ID is required' }, { status: 400 });
+  if (!jobId) {
+    return NextResponse.json({ error: 'Job ID is required' }, { status: 400 });
   }
 
-  const status = getUploadStatus(uploadId) || { progress: 0, status: 'pending' };
-  
+  const video = await prisma.video.findUnique({ where: { id: jobId } });
+
+  if (!video) {
+    return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+  }
+
   return NextResponse.json({
-    ...status,
-    isCompleted: status.status === 'completed'
+    status: video.status,
+    progress: video.progress,
+    isCompleted: video.status === 'COMPLETED'
   });
-} 
+}

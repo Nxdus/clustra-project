@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Video" ADD COLUMN     "progress" DOUBLE PRECISION NOT NULL DEFAULT 0.0;

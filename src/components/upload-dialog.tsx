@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 import { useDropzone } from 'react-dropzone';
 import { cn } from "@/lib/utils";
+// Dialog, DialogContent, etc. คือ component UI ของคุณเอง
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,6 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { useTranslations } from 'next-intl'
 
 const fileSchema = z.object({
   file: z
@@ -30,18 +30,13 @@ const fileSchema = z.object({
 });
 
 export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Promise<void> }) {
-  const t = useTranslations('video')
   const [file, setFile] = React.useState<File | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);
   const [isOpen, setIsOpen] = React.useState(false);
-  const controller = React.useRef<AbortController | null>(null);
-  const uploadId = React.useRef<string | null>(null);
   const [uploadProgress, setUploadProgress] = React.useState(0);
-  const cleanupRef = React.useRef<(() => void) | null>(null);
-  const unmountedRef = React.useRef(false);
-  const [uploadStatus, setUploadStatus] = React.useState<'idle' | 'uploading' | 'processing' | 'completed' | 'error'>('idle');
-  const [isUploadingToServer, setIsUploadingToServer] = React.useState(false);
+  const [uploadStatus, setUploadStatus] = React.useState<string>('idle');
+  const [jobId, setJobId] = React.useState<string | null>(null);
 
   const onDrop = React.useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
@@ -62,24 +57,17 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'video/mp4': ['.mp4']
-    },
+    accept: { 'video/mp4': ['.mp4'] },
     maxFiles: 1,
     disabled: isUploading
   });
 
-  const checkUploadStatus = async (uploadId: string) => {
-    let isActive = true;
-    const intervalRef = setInterval(async () => {
-      if (!isActive) return;
-
-      try {
-        const response = await fetch(`/api/upload-status?uploadId=${uploadId}`);
-        const data = await response.json();
-
-        if (!isActive) return;
-
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (jobId) {
+      interval = setInterval(async () => {
+        const res = await fetch(`/api/upload-status?jobId=${jobId}`);
+        const data = await res.json();
         if (data.error) {
           setUploadStatus('error');
           setIsUploading(false);
@@ -88,143 +76,74 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
             description: data.error,
             variant: "destructive"
           });
-          clearInterval(intervalRef);
+          if (interval) clearInterval(interval);
           return;
         }
 
-        setUploadProgress(data.progress);
         setUploadStatus(data.status);
+        setUploadProgress(data.progress);
 
         if (data.isCompleted) {
-          clearInterval(intervalRef);
+          if (interval) clearInterval(interval);
           setIsUploading(false);
           setIsOpen(false);
           await onUploadComplete();
           toast({
-            title: t('toast.upload.success.title'),
-            description: t('toast.upload.success.description')
+            title: "อัปโหลดสำเร็จ",
+            description: "ไฟล์ของคุณพร้อมใช้งานแล้ว"
           });
         }
-      } catch (error) {
-        console.error('Error checking upload status:', error);
-        if (isActive) {
-          clearInterval(intervalRef);
-        }
-      }
-    }, 1000);
-
+      }, 2000);
+    }
     return () => {
-      isActive = false;
-      clearInterval(intervalRef);
+      if (interval) clearInterval(interval);
     };
-  };
+  }, [jobId, onUploadComplete]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!file) return
+    e.preventDefault();
+    if (!file) return;
 
-    setIsUploading(true)
-    setIsUploadingToServer(true)
+    setIsUploading(true);
+    setUploadStatus('pending');
+    setUploadProgress(0);
 
-    uploadId.current = Date.now().toString()
-    controller.current = new AbortController()
+    const uploadId = Date.now().toString();
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("uploadId", uploadId);
 
     try {
-      cleanupRef.current = await checkUploadStatus(uploadId.current)
-
-      const formData = new FormData()
-      formData.append("file", file)
-      formData.append("uploadId", uploadId.current)
-
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
-        signal: controller.current.signal,
-      })
+      });
 
       if (!response.ok) {
-        const errorData = await response.json()
-        
-        if (errorData.code === 'UPLOAD_LIMIT_REACHED') {
-          toast({
-            title: t('toast.upload.limit.title'),
-            description: t('toast.upload.limit.description'),
-            variant: "destructive"
-          })
-          setIsOpen(false)
-          return
-        }
-        
-        throw new Error(errorData.message || t('upload.uploadError'))
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Upload error");
       }
 
-      const data = await response.json()
-      
-      if (data.error) {
-        throw new Error(data.error)
-      }
+      const data = await response.json();
+      setJobId(data.jobId);
 
-    } catch (err) {
-      if (err instanceof Error) {
-        if (err.name === "AbortError") {
-          toast({
-            title: t('toast.upload.cancel.title'),
-            description: t('toast.upload.cancel.description')
-          })
-        } else {
-          toast({
-            title: t('toast.upload.error.title'),
-            description: err.message || t('toast.upload.error.description'),
-            variant: "destructive"
-          })
-        }
-      }
+      toast({
+        title: "อัปโหลดสำเร็จ",
+        description: "ระบบกำลังประมวลผลไฟล์ของคุณ กรุณารอสักครู่..."
+      });
+
+    } catch (err: any) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: err.message,
+        variant: "destructive"
+      });
+      setIsUploading(false);
+      setJobId(null);
     } finally {
-      if (!unmountedRef.current) {
-        setIsUploadingToServer(false)
-        setFile(null)
-        uploadId.current = null
-        if (cleanupRef.current) {
-          cleanupRef.current()
-          cleanupRef.current = null
-        }
-      }
+      setFile(null);
     }
   }
-
-  React.useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isUploadingToServer) {
-        e.preventDefault();
-        e.returnValue = t('upload.leaveConfirm');
-        return e.returnValue;
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [isUploadingToServer, t]);
-
-  React.useEffect(() => {
-    return () => {
-      if (controller.current) {
-        controller.current.abort()
-      }
-      if (cleanupRef.current) {
-        cleanupRef.current()
-      }
-    }
-  }, [])
-
-  React.useEffect(() => {
-    unmountedRef.current = false
-    return () => {
-      unmountedRef.current = true
-    }
-  }, [])
 
   return (
     <Dialog 
@@ -237,10 +156,9 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
             setError(null);
           }
         } else {
-          const status = uploadStatus === 'processing' ? t('process.wait.converting') : t('process.wait.uploading');
           toast({
-            title: t('upload.cannotClose'),
-            description: status,
+            title: "ไม่สามารถปิดได้",
+            description: "งานกำลังอัปโหลดหรือประมวลผลอยู่",
             variant: "destructive"
           });
         }
@@ -249,16 +167,16 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       <DialogTrigger asChild>
         <Button className="bg-blue-600 hover:bg-blue-500 transition-all duration-200">
           <UploadCloud className="w-4 h-4 mr-2" />
-          {t('upload.button')}
+          อัปโหลดวิดีโอ
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
         <DialogHeader>
-          <DialogTitle id="dialog-title" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-            {t('upload.title')}
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+            อัปโหลดวิดีโอ
           </DialogTitle>
-          <DialogDescription id="dialog-description">
-            {t('upload.description')}
+          <DialogDescription>
+            เลือกไฟล์ MP4 ที่ต้องการอัปโหลด
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -296,8 +214,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
               ) : (
                 <>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">{t('upload.dragDrop')}</p>
-                    <p className="text-xs text-gray-500">{t('upload.supportedFormats')}</p>
+                    <p className="text-sm font-medium">ลากและวางไฟล์ที่นี่ หรือคลิกเพื่อเลือก</p>
+                    <p className="text-xs text-gray-500">รองรับเฉพาะ MP4</p>
                   </div>
                 </>
               )}
@@ -317,9 +235,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
                 className="h-3 rounded-lg [&>div]:bg-blue-500"
               />
               <p className="text-sm text-center text-muted-foreground">
-                {uploadStatus === 'processing' && t('upload.processingStatus', { progress: uploadProgress })}
-                {uploadStatus === 'uploading' && t('upload.uploadingStatus', { progress: uploadProgress })}
-                {uploadStatus === 'completed' && t('upload.completed')}
+                กำลังประมวลผล... {Math.round(uploadProgress)}%
               </p>
             </div>
           )}
@@ -332,12 +248,12 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
             {isUploading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {uploadStatus === 'processing' ? t('upload.processing') : t('upload.uploading')}
+                กำลังอัปโหลด...
               </>
             ) : (
               <>
                 <FileIcon className="w-4 h-4 mr-2" />
-                {t('upload.uploadButton')}
+                อัปโหลด
               </>
             )}
           </Button>
@@ -345,4 +261,4 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       </DialogContent>
     </Dialog>
   );
-} 
+}
