@@ -28,28 +28,30 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# ติดตั้งโปรแกรมที่จำเป็น
 RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata cronie
 
+# คัดลอกไฟล์จาก builder stage
 COPY --from=builder /app/ ./
 
 RUN npm install --production && chmod +x wait-for-it.sh
 
+# สร้างโฟลเดอร์ logs
 RUN mkdir -p /app/logs
 RUN mkdir -p /var/spool/cron/crontabs
 RUN chown root:root /var/spool/cron/crontabs
 RUN chown -R root:root /app/logs
 
-# ตั้งค่า crontab พร้อม SHELL, PATH
-RUN echo "SHELL=/bin/sh" > /var/spool/cron/crontabs/root
-RUN echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" >> /var/spool/cron/crontabs/root
-RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" >> /var/spool/cron/crontabs/root
+# ตั้งค่า crontab สำหรับ root ให้ echo 'hello' ทุก 1 นาที
+RUN echo "* * * * * echo 'hello' >> /app/logs/test.log 2>&1" > /var/spool/cron/crontabs/root
 RUN chmod 600 /var/spool/cron/crontabs/root && chown root:root /var/spool/cron/crontabs/root
-RUN crontab /var/spool/cron/crontabs/root
 
+# สร้าง Supervisor config เพื่อรัน cron และ start.sh พร้อมกัน
 RUN mkdir -p /etc/supervisor/conf.d
 RUN echo -e "[supervisord]\nnodaemon=true\n" > /etc/supervisor/conf.d/supervisord.conf
-RUN echo -e "[program:cron]\ncommand=/usr/sbin/crond -f -l 2 -d 8\nautostart=true\nautorestart=true\nuser=root\n" >> /etc/supervisor/conf.d/supervisord.conf
-RUN echo -e "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\nuser=root\n" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[program:cron]\ncommand=/usr/sbin/crond -f -l 2\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo -e "[program:nextjs]\ncommand=./start.sh\ndirectory=/app\nautostart=true\nautorestart=true\n" >> /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 3000
+
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
