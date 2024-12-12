@@ -36,20 +36,26 @@ WORKDIR /app
 RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata
 RUN apk add --no-cache cronie
 
-# Copy from builder
+# Copy จาก builder stage มาทั้งหมด
 COPY --from=builder /app/ ./
 
-# Install production dependencies
+# ติดตั้ง production dependencies
 RUN npm install --production && chmod +x wait-for-it.sh
 
-# สร้างโฟลเดอร์ logs เพื่อเก็บไฟล์ log ของ cron
+# สร้างโฟลเดอร์ logs เก็บไฟล์ log ของ cron
 RUN mkdir -p /app/logs
 
 # สร้างโฟลเดอร์สำหรับ crontabs
 RUN mkdir -p /var/spool/cron/crontabs
 
+# หาตำแหน่ง node
+# ปกติ node ใน official node image จะอยู่ที่ /usr/local/bin/node
+# ใช้ absolute path เพื่อให้ cron เจอ node แน่นอน
+RUN which node
+
 # เขียนคำสั่ง cron job ลงใน crontab ของ root (รันทุก 1 นาที)
-RUN echo "* * * * * node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /var/spool/cron/crontabs/root
+# ใช้ absolute path ของ node (/usr/local/bin/node) เพื่อป้องกัน PATH ปัญหา
+RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /var/spool/cron/crontabs/root
 
 # ตั้งสิทธิ์ไฟล์ crontab เป็น 600
 RUN chmod 600 /var/spool/cron/crontabs/root
