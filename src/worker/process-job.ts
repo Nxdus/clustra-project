@@ -93,6 +93,7 @@ async function processPendingJobs() {
           .on('progress', async (progress) => {
             const now = Date.now();
             if (now - lastUpdateTime > 1000) {
+              console.log(progress.percent)
               lastUpdateTime = now;
               await prisma.video.update({
                 where: { id: job.id },
