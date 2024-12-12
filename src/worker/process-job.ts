@@ -1,8 +1,8 @@
 import 'dotenv/config' // ถ้าคุณต้องการโหลด env ตอนรัน worker
 import { prisma } from '../lib/prisma';
 import ffmpeg from 'fluent-ffmpeg';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { CloudFrontClient, CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
 import { promisify } from 'util';
