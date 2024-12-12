@@ -20,11 +20,6 @@ RUN npm run build
 COPY start.sh ./
 RUN chmod +x start.sh
 
-RUN ls -al ./src/worker
-
-# คอมไพล์เฉพาะไฟล์ process-jobs.ts
-RUN npx tsc ./src/worker/process-jobs.ts --outDir dist/worker
-
 # Production stage
 FROM node:18-alpine
 WORKDIR /app
@@ -38,7 +33,7 @@ RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
 
 # ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
-RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-jobs.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
+RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
 RUN mkdir -p /etc/supervisor/conf.d
