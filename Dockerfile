@@ -23,7 +23,7 @@ RUN chmod +x start.sh
 RUN ls -al src/worker
 
 # คอมไพล์เฉพาะไฟล์ process-jobs.ts
-RUN npx tsc src/worker/process-job.ts --outDir src/dist --module commonjs --target es6 --esModuleInterop --skipLibCheck
+RUN npx tsc src/worker/process-job.ts --outDir dist --module commonjs --target es6 --esModuleInterop --skipLibCheck
 
 # Production stage
 FROM node:18-alpine
