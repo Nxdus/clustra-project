@@ -20,6 +20,8 @@ RUN npm run build
 COPY start.sh ./
 RUN chmod +x start.sh
 
+RUN npx tsc src/worker/process-job.ts --outDir dist/worker --module commonjs --target es6
+
 # Production stage
 FROM node:18-alpine
 WORKDIR /app
