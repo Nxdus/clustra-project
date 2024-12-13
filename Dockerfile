@@ -22,9 +22,6 @@ RUN chmod +x start.sh
 
 RUN ls -al src/worker
 
-# คอมไพล์เฉพาะไฟล์ process-jobs.ts
-RUN npx tsc src/worker/process-job.ts --outDir dist --module commonjs --target es6 --esModuleInterop --skipLibCheck
-
 # Production stage
 FROM node:18-alpine
 WORKDIR /app
@@ -36,8 +33,6 @@ RUN npm install --production && chmod +x wait-for-it.sh
 
 RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
-
-RUN echo "DATABASE_URL=postgresql://Clustra:123456@db:5432/clustra-db?schema=public" >> /etc/crontabs/root
 
 # ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
 RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
