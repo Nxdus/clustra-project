@@ -1,4 +1,3 @@
-import 'dotenv/config' // ถ้าคุณต้องการโหลด env ตอนรัน worker
 import { prisma } from '../lib/prisma';
 import ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
@@ -51,8 +50,6 @@ async function uploadToS3(key: string, body: Buffer, contentType: string) {
 }
 
 async function processPendingJobs() {
-
-  console.log(process.env.DATABASE_URL)
 
   const jobs = await prisma.video.findMany({ where: { status: 'PENDING' }, take: 5 });
 
