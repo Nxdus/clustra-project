@@ -4,7 +4,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": false,
+    "noEmit": true,
     "module": "commonjs",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -37,7 +37,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/server/**/*.ts",
-    "src/worker/process-job.ts"
   ],
   "exclude": ["node_modules"]
 }
