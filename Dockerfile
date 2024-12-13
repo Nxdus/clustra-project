@@ -35,7 +35,16 @@ RUN npm install --production && chmod +x wait-for-it.sh
 RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
 
-# ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
+# เพิ่ม DATABASE_URL ในไฟล์ /etc/environment
+RUN echo "DATABASE_URL=postgresql://Clustra:123456@db:5432/clustra-db?schema=public" >> /etc/environment
+RUN echo "AWS_REGION=ap-southeast-1" >> /etc/environment
+RUN echo "AWS_ACCESS_KEY_ID=AKIAWQUOZWE6B7U75K4H" >> /etc/environment
+RUN echo "AWS_SECRET_ACCESS_KEY=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" >> /etc/environment
+RUN echo "CLOUDFRONT_DISTRIBUTION_ID=E6COYGY4KRPPL" >> /etc/environment
+RUN echo "AWS_BUCKET_NAME=clustra-bucket-2" >> /etc/environment
+
+
+# Cron จะใช้ environment ที่กำหนดไว้ใน /etc/environment
 RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
