@@ -45,7 +45,7 @@ RUN echo "AWS_BUCKET_NAME=clustra-bucket-2" >> /etc/environment
 
 
 # Cron จะใช้ environment ที่กำหนดไว้ใน /etc/environment
-RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
+RUN echo "* * * * * . /etc/environment; env >> /app/logs/cron-env.log; /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
 RUN mkdir -p /etc/supervisor/conf.d
@@ -60,7 +60,7 @@ RUN echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
 
 RUN echo "[program:nextjs]" >> /etc/supervisor/conf.d/supervisord.conf
-RUN echo "command=./start.sh" >> /etc/supervisor/conf.d/supervisord.conf
+RUN echo "command=./start.sh >> /app/logs/nextjs.log 2>&1" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "directory=/app" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "autostart=true" >> /etc/supervisor/conf.d/supervisord.conf
 RUN echo "autorestart=true" >> /etc/supervisor/conf.d/supervisord.conf
