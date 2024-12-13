@@ -37,6 +37,8 @@ RUN npm install --production && chmod +x wait-for-it.sh
 RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
 
+RUN echo "DATABASE_URL=postgresql://Clustra:123456@db:5432/clustra-db?schema=public" >> /etc/crontabs/root
+
 # ใช้ /etc/crontabs/root แทน /var/spool/cron/crontabs
 RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
