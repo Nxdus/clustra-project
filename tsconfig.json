@@ -36,7 +36,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/server/**/*.ts"
+    "src/server/**/*.ts",
+    "src/worker/process-job.ts"
   ],
   "exclude": ["node_modules"]
 }
