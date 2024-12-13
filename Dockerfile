@@ -18,7 +18,6 @@ RUN apk add --no-cache openssl
 RUN npx prisma generate
 
 RUN npm run build
-RUN ls -al /app/dist
 
 COPY start.sh ./
 RUN chmod +x start.sh
