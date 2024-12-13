@@ -51,6 +51,9 @@ async function uploadToS3(key: string, body: Buffer, contentType: string) {
 }
 
 async function processPendingJobs() {
+
+  console.log(process.env.DATABASE_URL)
+
   const jobs = await prisma.video.findMany({ where: { status: 'PENDING' }, take: 5 });
 
   for (const job of jobs) {
