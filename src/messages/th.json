@@ -1,15 +1,19 @@
 {
   "meta": {
-    "title": "Clustra - แพลตฟอร์มแปลงไฟล์วิดีโอ"
+    "title": "Clustra - แปลงไฟล์วิดีโอ",
+    "description": "Clustra - ลดความซับซ้อนของการสตรีมวิดีโอด้วยการแปลง MP4 เป็น M3U8 การสตรีม URL ที่ปลอดภัย และการควบคุมการเข้าถึงแบบกำหนดเอง"
   },
   "nav": {
     "dashboard": "แดชบอร์ด",
     "signOut": "ออกจากระบบ",
-    "signIn": "เข้าสู่ระบบ"
+    "signIn": "เข้าสู่ระบบ",
+    "signUp": "ลงทะเบียน"
   },
   "auth": {
     "signInWithGoogle": "เข้าสู่ระบบด้วย Google",
-    "signInDescription": "เข้าสู่ระบบเพื่อดำเนินการต่อ"
+    "signInWithGitHub": "เข้าสู่ระบบด้วย Github",
+    "signInDescription": "เข้าสู่ระบบเพื่อดำเนินการต่อ",
+    "signUpDescription": "ลงทะเบียนเข้าสู่ระบบเพิ่อดำเนินการต่อ"
   },
   "hero": {
     "title": "แปลงไฟล์วิดีโอ MP4 เป็น M3U8 แบบง่ายๆ",

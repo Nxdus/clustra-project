@@ -72,7 +72,7 @@ export async function DELETE(
               `https://${asciiDomain}`
             ]
           }).flat()
-        : ['https://clustra.tech'] // ใส่ default origin เมื่อไม่มี domain เหลือ
+        : ['https://localhost'] // ใส่ default origin เมื่อไม่มี domain เหลือ
 
       // ดึง policy ปัจจุบัน
       const getCommand = new GetResponseHeadersPolicyCommand({

@@ -1,7 +1,10 @@
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
+import GitHubProvider from "next-auth/providers/github"
 import { prisma } from "./prisma"
+import Credentials from "next-auth/providers/credentials"
+import bcrypt from 'bcryptjs'
 
 declare module "next-auth" {
   interface Session {
@@ -34,6 +37,25 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = credentials as { email: string; password: string }
+        const user = await prisma.user.findUnique({ where: { email } })
+        if (!user || !user.password) return null
+        const isValid = await bcrypt.compare(password, user.password)
+        if (!isValid) return null
+        return user
+      }
+    })
   ],
   callbacks: {
     jwt: async ({ token, user }) => {

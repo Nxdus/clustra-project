@@ -5,8 +5,6 @@ import { Providers } from './providers';
 import { Toaster } from '@/components/ui/toaster';
 import { Metadata } from 'next';
 
-import '@/app/globals.css';
-
 const timeZone = 'Asia/Bangkok';
 
 // แก้ไข type ของ generateMetadata
@@ -28,11 +26,21 @@ export async function generateMetadata({
       messages,
       timeZone,
     });
-    return { title: t('meta.title') };
+
+    // Metadata object
+    return {
+      title: t('meta.title'),
+      description: t('meta.description') || "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control.",
+      keywords: "Clustra, mp4 to m3u8, video converter, m3u8 generator, video streaming, URL streaming, streaming access control, domain-restricted streaming, public streaming, video hosting, microsaas video service, video file conversion, secure video streaming, video transcoding, cloud video storage, video on demand, HLS streaming, video file management, Clustra microsaas, Clustra video service",
+      icons: {
+        icon: '/favicon.ico'
+      }
+    };
   } catch {
     return { title: 'Default Title' };
   }
 }
+
 
 // แก้ไข Props type
 interface LayoutProps {
@@ -45,7 +53,7 @@ export default async function LocaleLayout({
   params,
 }: LayoutProps) {
   const { locale } = await params;
-  
+
   const validLocales = ['th', 'en'];
   if (!validLocales.includes(locale)) {
     notFound();
@@ -55,14 +63,10 @@ export default async function LocaleLayout({
     const messages = (await import(`@/messages/${locale}.json`)).default;
 
     return (
-      <html lang={locale}>
-        <body className="min-h-screen bg-background font-sans antialiased">
-          <Providers locale={locale} messages={messages} timeZone={timeZone}>
-            {children}
-            <Toaster />
-          </Providers>
-        </body>
-      </html>
+      <Providers locale={locale} messages={messages} timeZone={timeZone}>
+        {children}
+        <Toaster />
+      </Providers>
     );
   } catch (error) {
     console.error(`Failed to load layout for locale: ${locale}`, error);

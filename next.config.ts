@@ -23,12 +23,6 @@ const nextConfig: NextConfig = {
       }
     ]
   },
-  
-  // ลรับแต่ง webpack config
-  webpack: (config) => {
-    config.cache = false;
-    return config
-  }
 };
 
 export default nextConfig;

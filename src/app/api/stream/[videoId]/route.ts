@@ -77,7 +77,6 @@ export async function GET(
     return new Response(content, { headers: corsHeaders });
 
   } catch (error) {
-    console.error('Error streaming video:', error);
     return NextResponse.json(
       { error: "Internal server error", details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

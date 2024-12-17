@@ -1,0 +1,92 @@
+services:
+
+  web:
+    build: .
+    volumes:
+      - ./public/uploads:/app/public/uploads
+      - ./public/converted:/app/public/converted
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_BUCKET_NAME=${AWS_BUCKET_NAME}
+      - AWS_REGION=${AWS_REGION}
+      - CLOUDFRONT_DOMAIN=${CLOUDFRONT_DOMAIN}
+      - CLOUDFRONT_DISTRIBUTION_ID=${CLOUDFRONT_DISTRIBUTION_ID}
+      - CLOUDFRONT_KEY_PAIR_ID=${CLOUDFRONT_KEY_PAIR_ID}
+      - CLOUDFRONT_PRIVATE_KEY=${CLOUDFRONT_PRIVATE_KEY}
+      - CLOUDFRONT_RESPONSE_HEADERS_POLICY_ID=${CLOUDFRONT_RESPONSE_HEADERS_POLICY_ID}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_MONTHLY_PRICE_ID=${STRIPE_MONTHLY_PRICE_ID}
+      - STRIPE_ANNUAL_PRICE_ID=${STRIPE_ANNUAL_PRICE_ID}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # ไฟล์หลัก nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d          # Mount ทั้ง directory conf.d
+      # - ./nginx/certbot:/etc/letsencrypt
+      # - ./nginx/www:/usr/share/nginx/html
+      - ./nginx/ssl/localhost.crt:/etc/nginx/ssl/localhost.crt
+      - ./nginx/ssl/localhost.key:/etc/nginx/ssl/localhost.key
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    restart: always
+
+  # certbot:
+  #   image: certbot/dns-cloudflare
+  #   volumes:
+  #     - ./nginx/certbot:/etc/letsencrypt
+  #     - ./nginx/www:/usr/share/nginx/html
+  #     - ./cloudflare.ini:/root/.secrets/cloudflare.ini
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   environment:
+  #     - CF_API_EMAIL=paitong1550@gmail.com
+  #     - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
+  #   command: certificates
+  #   entrypoint: |
+  #     /bin/sh -c '
+  #     apk add --no-cache docker-cli
+  #     trap exit TERM
+  #     while :; do
+  #       certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet
+  #       docker exec $(docker ps -q -f name=nginx) nginx -s reload
+  #       sleep 3d & wait $${!}
+  #     done'
+  #   depends_on:
+  #     - nginx
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

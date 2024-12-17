@@ -1,15 +1,19 @@
 {
   "meta": {
-    "title": "Clustra - Video Conversion Platform"
+    "title": "Clustra - Video Conversion",
+    "description": "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control."
   },
   "nav": {
     "dashboard": "Dashboard",
     "signOut": "Sign Out",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
   },
   "auth": {
     "signInWithGoogle": "Sign in with Google",
-    "signInDescription": "Sign in to your account to continue"
+    "signInWithGitHub": "Sign in with Github",
+    "signInDescription": "Sign in to your account to continue",
+    "signUpDescription": "Sign up to create your account for continue"
   },
   "hero": {
     "title": "Convert MP4 Videos to M3U8 Easily",

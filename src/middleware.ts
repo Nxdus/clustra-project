@@ -6,7 +6,8 @@ import { NextRequest } from 'next/server';
 // Create language middleware
 const intlMiddleware = createMiddleware({
   locales: ['en', 'th'],
-  defaultLocale: 'th'
+  defaultLocale: 'th',
+  localePrefix: 'always'
 });
 
 // Combine both middlewares
@@ -15,10 +16,10 @@ export default withAuth(
     // Handle root path redirect
     if (request.nextUrl.pathname === '/') {
       // Get locale from cookie or use default
-      const locale = request.cookies.get('NEXT_LOCALE')?.value || 'th';
+      const locale = request.cookies.get('NEXT_LOCALE')?.value || 'en';
       return NextResponse.redirect(new URL(`/${locale}`, request.url));
     }
-    
+
     // Apply language middleware for all other routes
     return intlMiddleware(request);
   },
@@ -34,8 +35,8 @@ export const config = {
     // Add root path to matcher
     '/',
     // Internationalization paths
-    '/((?!api|_next|.*\\..*).*))',
+    '/((?!api|_next|_vercel|.*\\..*|static|public|favicon.ico|en/docs/*|th/docs/*).*)',
     // Authentication paths
-    '/dashboard/:path*',
+    '/en/dashboard/:path*',
   ]
 }; 
