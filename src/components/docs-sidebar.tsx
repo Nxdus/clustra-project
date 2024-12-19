@@ -29,7 +29,7 @@ const data = {
           isActive: true,
         },
         {
-          title: "Project Structure",
+          title: "Coming Soon..",
           url: "#",
         },
       ],
