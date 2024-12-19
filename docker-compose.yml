@@ -40,8 +40,6 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d          # Mount ทั้ง directory conf.d
       - ./nginx/certbot:/etc/letsencrypt
       - ./nginx/www:/usr/share/nginx/html
-      # - ./nginx/ssl/localhost.crt:/etc/nginx/ssl/localhost.crt
-      # - ./nginx/ssl/localhost.key:/etc/nginx/ssl/localhost.key
     ports:
       - "80:80"
       - "443:443"
