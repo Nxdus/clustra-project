@@ -67,7 +67,7 @@ services:
       while :; do
         certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet
         docker exec $(docker ps -q -f name=nginx) nginx -s reload
-        sleep 3d & wait $${!}
+        sleep 3d & wait $$!
       done'
     depends_on:
       - nginx
