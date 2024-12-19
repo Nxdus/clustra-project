@@ -19,6 +19,7 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useLocale } from "next-intl"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function DocPage() {
     const locale = useLocale()
@@ -51,148 +52,98 @@ export default function DocPage() {
                         </Link>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-8 p-8 max-w-4xl mx-auto">
-                    <div className="space-y-6">
-                        <h1 className="text-4xl font-bold">�� Video Streaming Platform</h1>
-                        <p className="text-lg text-muted-foreground">
-                            ระบบ Video Streaming Platform เป็นแพลตฟอร์มที่ให้บริการจัดการและสตรีมมิ่งวิดีโอแบบครบวงจร โดยมีจุดเด่นดังนี้:
-                        </p>
-                    </div>
 
-                    <div className="space-y-8">
+                <main className="flex flex-1 flex-col gap-8 p-8 max-w-4xl mx-auto">
+                    <article className="space-y-20">
                         <section className="space-y-4">
-                            <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                <span>✨</span> คุณสมบัติหลัก
-                            </h2>
-                            <div className="grid gap-4">
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <h3 className="font-medium mb-2">การจัดการวิดีโอที่ยืดหยุ่น</h3>
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>รองรับการอัพโหลดไฟล์ MP4</li>
-                                        <li>แปลงไฟล์อัตโนมัติเป็นรูปแบบ HLS สำหรับ Adaptive Streaming</li>
-                                        <li>ระบบจัดการสิทธิ์การเข้าถึงแบบ Public/Private</li>
-                                    </ul>
-                                </div>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <h3 className="font-medium mb-2">ความปลอดภัยระดับสูง</h3>
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>การเข้ารหัส URL แบบ Signed URL สำหรับวิดีโอส่วนตัว</li>
-                                        <li>ระบบจำกัด Domain (CORS) สำหรับการเข้าถึง</li>
-                                        <li>การยืนยันตัวตนผ่าน OAuth 2.0</li>
-                                    </ul>
-                                </div>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <h3 className="font-medium mb-2">ระบบ Multi-tier Subscription</h3>
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>FREE: พื้นที่ 2GB, จำกัด 5 วิดีโอต่อเดือน</li>
-                                        <li>PRO: พื้นที่ 20GB, ไม่จำกัดจำนวนวิดีโอ</li>
-                                        <li>ENTERPRISE: ไม่จำกัดทั้งพื้นที่และจำนวนวิดีโอ</li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <h1 className="text-4xl font-bold">
+                                Introduction
+                            </h1>
+                            <p className="text-lg text-muted-foreground">
+                                Clustra - Video Conversion ให้บริการแปลงไฟล์วิดีโอ MP4 เป็น M3U8 ได้อย่างสะดวกและรวดเร็ว
+                                พร้อมทั้งจัดเก็บไฟล์ของคุณบนระบบคลาวด์ และสร้างลิงก์สำหรับแชร์วิดีโอในรูปแบบ HLS
+                                อีกทั้งยังสามารถตั้งค่าความปลอดภัยของลิงก์สตรีมมิ่งเพื่อกำหนดสิทธิ์การเข้าถึงได้อย่างยืดหยุ่น
+                            </p>
                         </section>
 
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                <span>🛠</span> เทคโนโลยีที่ใช้
-                            </h2>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>Frontend: Next.js, TypeScript, TailwindCSS</li>
-                                        <li>Backend: Node.js, Prisma ORM</li>
-                                        <li>Cloud Services: AWS S3, CloudFront</li>
-                                    </ul>
-                                </div>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>Payment: Stripe Integration</li>
-                                        <li>Video Processing: FFmpeg</li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <section>
+                            <h2 className="text-2xl font-semibold">FAQ</h2>
+                            <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="item-1">
+                                    <AccordionTrigger>
+                                        <h3 className="font-medium">M3U8 คืออะไร?</h3>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <p>
+                                            M3U8 เป็นไฟล์สำหรับการสตรีมวิดีโอแบบ HLS (HTTP Live Streaming) ซึ่งเป็นมาตรฐานที่พัฒนาโดย Apple
+                                            โดยภายในไฟล์ M3U8 จะประกอบด้วยลิงก์ไปยังวิดีโอชิ้นเล็ก ๆ (Segments)
+                                            เพื่อให้การสตรีมสามารถรับมือกับความไม่เสถียรของเครือข่ายและส่งมอบประสบการณ์ที่ราบรื่นต่อผู้รับชม
+                                        </p>
+                                        <p>
+                                            ไฟล์ M3U8 ถูกนำมาใช้อย่างแพร่หลายในแพลตฟอร์มสตรีมมิ่ง
+                                            เช่น เว็บไซต์สตรีมวิดีโอ แอปพลิเคชัน และบริการ OTT
+                                            และยังรองรับการปรับคุณภาพของวิดีโออัตโนมัติตามความเร็วอินเทอร์เน็ต (Adaptive Streaming)
+                                            เพื่อการเล่นวิดีโอที่ต่อเนื่องและมีคุณภาพ
+                                        </p>
+                                    </AccordionContent>
+                                </AccordionItem>
+
+                                <AccordionItem value="item-2">
+                                    <AccordionTrigger>
+                                        <h3 className="font-medium">HLS คืออะไร?</h3>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <p>
+                                            HLS หรือ HTTP Live Streaming เป็นโปรโตคอลที่พัฒนาโดย Apple
+                                            เพื่อส่งมอบวิดีโอผ่านอินเทอร์เน็ตอย่างมีประสิทธิภาพ
+                                            HLS จะทำการแบ่งวิดีโอออกเป็นส่วนย่อย ๆ (Segments) และใช้ไฟล์ Playlist (เช่น M3U8)
+                                            ในการกำหนดลำดับการเล่น ผู้ชมสามารถรับชมวิดีโอด้วยคุณภาพที่ปรับตามความเร็วอินเทอร์เน็ต (Adaptive Bitrate Streaming)
+                                            ทำให้การสตรีมลื่นไหลแม้ในกรณีที่เครือข่ายไม่เสถียร
+                                        </p>
+                                    </AccordionContent>
+                                </AccordionItem>
+
+                                <AccordionItem value="item-3">
+                                    <AccordionTrigger>
+                                        <h3 className="font-medium">ไลบรารีที่รองรับ HLS มีอะไรบ้าง?</h3>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <p className="mb-2">
+                                            ในการเล่นวิดีโอ HLS บนเว็บไซต์หรือแอปพลิเคชัน
+                                            คุณสามารถใช้ไลบรารีดังต่อไปนี้เพื่อให้การใช้งานเป็นไปอย่างสะดวกและมีประสิทธิภาพ:
+                                        </p>
+                                        <ul className="list-disc list-inside space-y-2">
+                                            <li>
+                                                <strong>HLS.js</strong> - ไลบรารี JavaScript ขนาดเล็ก
+                                                สำหรับการเล่น HLS บนเบราว์เซอร์ที่ไม่รองรับ HLS โดยตรง เช่น Chrome และ Firefox
+                                            </li>
+                                            <li>
+                                                <strong>Video.js</strong> - Media Player ยอดนิยม
+                                                รองรับ HLS ผ่าน Plugin videojs-http-streaming (VHS) และสามารถปรับแต่ง UI ได้หลากหลาย
+                                            </li>
+                                            <li>
+                                                <strong>Shaka Player</strong> - ไลบรารีจาก Google
+                                                รองรับทั้ง HLS และ DASH โดยเน้นการจัดการ DRM และคุณสมบัติขั้นสูง
+                                            </li>
+                                            <li>
+                                                <strong>Clappr</strong> - Media Player แบบ Open Source
+                                                ที่รองรับ HLS และปรับแต่งได้ง่ายเพื่อตอบโจทย์การใช้งานที่หลากหลาย
+                                            </li>
+                                            <li>
+                                                <strong>Plyr</strong> - Media Player น้ำหนักเบาและสวยงาม
+                                                รองรับ HLS ผ่าน HLS.js
+                                            </li>
+                                        </ul>
+                                        <p className="mt-2">
+                                            การใช้ไลบรารีเหล่านี้จะช่วยให้คุณสามารถเพิ่มความสามารถในการสตรีมวิดีโอ HLS
+                                            และปรับแต่งการแสดงผลให้เหมาะสมกับแพลตฟอร์มของคุณมากขึ้น
+                                        </p>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         </section>
-
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                <span>💡</span> Use Cases
-                            </h2>
-                            <p className="text-muted-foreground">เหมาะสำหรับ:</p>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>ผู้ให้บริการคอร์สเรียนออนไลน์</li>
-                                        <li>แพลตฟอร์ม Video-on-Demand</li>
-                                    </ul>
-                                </div>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>ระบบจัดเก็บและแชร์วิดีโอภายในองค์กร</li>
-                                        <li>ผู้พัฒนาที่ต้องการระบบ Video Streaming ที่ปลอดภัย</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-
-                        <div className="grid md:grid-cols-2 gap-8">
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                    <span>🌐</span> การรองรับภาษา
-                                </h2>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>รองรับการแสดงผลแบบ Multi-language (ไทย/อังกฤษ)</li>
-                                        <li>ระบบจัดการคำแปลแบบ JSON-based</li>
-                                        <li>สามารถเพิ่มภาษาใหม่ได้ง่าย</li>
-                                    </ul>
-                                </div>
-                            </section>
-
-                            <section className="space-y-4">
-                                <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                    <span>📊</span> ระบบติดตามการใช้งาน
-                                </h2>
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>ติดตามปริมาณการใช้พื้นที่</li>
-                                        <li>สถิติการอัพโหลดรายเดือน</li>
-                                        <li>ประวัติการเข้าถึงวิดีโอ</li>
-                                    </ul>
-                                </div>
-                            </section>
-                        </div>
-
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                <span>🔄</span> การผสานรวมที่ยืดหยุ่น
-                            </h2>
-                            <p className="text-muted-foreground">สามารถใช้งานร่วมกับ Library ยอดนิยมได้ง่าย:</p>
-                            <div className="grid md:grid-cols-4 gap-4">
-                                <div className="p-4 rounded-lg border bg-card text-center">HLS.js</div>
-                                <div className="p-4 rounded-lg border bg-card text-center">Video.js</div>
-                                <div className="p-4 rounded-lg border bg-card text-center">Plyr</div>
-                                <div className="p-4 rounded-lg border bg-card text-center">และ Library อื่นๆ</div>
-                            </div>
-                        </section>
-
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-semibold flex items-center gap-2">
-                                <span>🎯</span> เป้าหมาย
-                            </h2>
-                            <p className="text-muted-foreground">แพลตฟอร์มนี้ถูกพัฒนาขึ้นเพื่อให้:</p>
-                            <div className="grid gap-4">
-                                <div className="p-4 rounded-lg border bg-card">
-                                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                                        <li>ผู้ใช้สามารถจัดการวิดีโอได้อย่างมีประสิทธิภาพ</li>
-                                        <li>มี��วามปลอดภัยสูงในการจัดเก็บและส่งมอบคอนเทนต์</li>
-                                        <li>รองรับการขยายตัวของธุรกิจผ่านระบบ Subscription</li>
-                                        <li>ใช้งานง่ายและผสานรวมกับระบบอื่นได้อย่างยืดหยุ่น</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-                </div>
+                    </article>
+                </main>
             </SidebarInset>
         </SidebarProvider>
     )

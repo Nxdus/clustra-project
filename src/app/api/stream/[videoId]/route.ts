@@ -30,7 +30,7 @@ export async function GET(
       return NextResponse.json({ error: "Video not found" }, { status: 404 });
     }
 
-    const isLocalhost = domain?.includes('localhost') || domain?.includes('127.0.0.1');
+    const isLocalhost = domain?.includes('clustra.tech') || domain?.includes('124.121.20.248');
     
     if (!video.isPublic && !isLocalhost && !domain) {
       return NextResponse.json({ error: "Unauthorized domain" }, { status: 403 });

@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import { Button } from "./ui/button"
-import { Trash2, Code, Copy, Pencil, Check, X, Globe, Lock } from "lucide-react"
+import { Trash2, Code, Copy, Pencil, Check, X, Globe, Lock, CopyIcon } from "lucide-react"
 import { Switch } from "./ui/switch"
 import { toast } from "@/hooks/use-toast"
 import { Video } from "@/types/video"
@@ -87,9 +87,9 @@ const AccessControl = React.memo(({ video, onUpdateAccess }: { video: Video, onU
 });
 AccessControl.displayName = 'AccessControl';
 
-const TitleCell = ({ row, onRename }: { 
-  row: { original: Video },
-  onRename: () => Promise<void> 
+const TitleCell = ({ row, onRename }: {
+    row: { original: Video },
+    onRename: () => Promise<void>
 }) => {
     const video = row.original;
     const [isEditing, setIsEditing] = useState(false);
@@ -192,15 +192,15 @@ const CellComponent = ({ row, locale }: { row: { original: Video }, locale: stri
     );
 };
 
-const ActionsCell = ({ row, onDelete, onRefreshStats }: { 
-    row: { original: Video }, 
+const ActionsCell = ({ row, onDelete, onRefreshStats }: {
+    row: { original: Video },
     onDelete: (fileKey: string) => Promise<void>,
     onRefreshStats: () => Promise<void>
 }) => {
     const video = row.original;
     const staticUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}`;
     const t = useTranslations();
-    
+
     return (
         <div className="flex items-center justify-center gap-2">
             <VideoDialog video={video} />
@@ -221,27 +221,40 @@ const ActionsCell = ({ row, onDelete, onRefreshStats }: {
             </Button>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button 
+                    <Button
                         variant="ghost"
-                        size="sm"
+                        size="lg"
                         className="h-8 hover:bg-blue-50 dark:hover:bg-blue-950 hover:text-blue-600 dark:hover:text-blue-400"
                     >
                         <Code className="h-4 w-4 mr-2" />
                         {t('video.viewCode')}
                     </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-3xl">
                     <DialogHeader>
                         <DialogTitle>{t('video.viewCode')}</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
-                        <pre className="p-4 bg-muted rounded-lg overflow-x-auto">
-                            <code>
-                                {`<video controls>
-    <source src="${staticUrl}" type="application/x-mpegURL">
-</video>`}
-                            </code>
-                        </pre>
+                        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900 font-mono text-sm overflow-auto">
+                            <div className="flex justify-between">
+                                <pre className="whitespace-pre-wrap break-words max-w-full">
+                                    {`<video id="player" controls>\n    <source src="${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}" type="application/x-mpegURL">\n</video>\n\n<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>\n\n<script>\n    const video = document.getElementById('player');\n    if(Hls.isSupported()) {\n        const hls = new Hls();\n        hls.loadSource('${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}');\n        hls.attachMedia(video);\n    }\n</script>`}
+                                </pre>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(`<video id="player" controls>\n    <source src="${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}" type="application/x-mpegURL">\n</video>\n\n<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>\n\n<script>\n    const video = document.getElementById('player');\n    if(Hls.isSupported()) {\n        const hls = new Hls();\n        hls.loadSource('${process.env.NEXT_PUBLIC_API_URL}/api/stream/${video.id}');\n        hls.attachMedia(video);\n    }\n</script>`); // แทนที่ด้วยข้อความที่ต้องการคัดลอก
+                                        toast({
+                                            title: t('video.copy.success'),
+                                            description: t('video.copy.description')
+                                        });
+                                    }}
+                                >
+                                    <CopyIcon/>
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
@@ -346,7 +359,7 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
                         <TableRow className="hover:bg-transparent">
                             {table.getHeaderGroups().map((headerGroup) => (
                                 headerGroup.headers.map((header) => (
-                                    <TableHead 
+                                    <TableHead
                                         key={header.id}
                                         className="text-xs font-medium text-muted-foreground text-center h-11"
                                         style={{ width: header.column.columnDef.size }}
@@ -368,7 +381,7 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
                                     className="group hover:bg-slate-50 dark:hover:bg-slate-900"
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell 
+                                        <TableCell
                                             key={cell.id}
                                             style={{ width: cell.column.columnDef.size }}
                                         >

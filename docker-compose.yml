@@ -38,10 +38,10 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # ไฟล์หลัก nginx.conf
       - ./nginx/conf.d:/etc/nginx/conf.d          # Mount ทั้ง directory conf.d
-      # - ./nginx/certbot:/etc/letsencrypt
-      # - ./nginx/www:/usr/share/nginx/html
-      - ./nginx/ssl/localhost.crt:/etc/nginx/ssl/localhost.crt
-      - ./nginx/ssl/localhost.key:/etc/nginx/ssl/localhost.key
+      - ./nginx/certbot:/etc/letsencrypt
+      - ./nginx/www:/usr/share/nginx/html
+      # - ./nginx/ssl/localhost.crt:/etc/nginx/ssl/localhost.crt
+      # - ./nginx/ssl/localhost.key:/etc/nginx/ssl/localhost.key
     ports:
       - "80:80"
       - "443:443"
@@ -49,28 +49,28 @@ services:
       - web
     restart: always
 
-  # certbot:
-  #   image: certbot/dns-cloudflare
-  #   volumes:
-  #     - ./nginx/certbot:/etc/letsencrypt
-  #     - ./nginx/www:/usr/share/nginx/html
-  #     - ./cloudflare.ini:/root/.secrets/cloudflare.ini
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   environment:
-  #     - CF_API_EMAIL=paitong1550@gmail.com
-  #     - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
-  #   command: certificates
-  #   entrypoint: |
-  #     /bin/sh -c '
-  #     apk add --no-cache docker-cli
-  #     trap exit TERM
-  #     while :; do
-  #       certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet
-  #       docker exec $(docker ps -q -f name=nginx) nginx -s reload
-  #       sleep 3d & wait $${!}
-  #     done'
-  #   depends_on:
-  #     - nginx
+  certbot:
+    image: certbot/dns-cloudflare
+    volumes:
+      - ./nginx/certbot:/etc/letsencrypt
+      - ./nginx/www:/usr/share/nginx/html
+      - ./cloudflare.ini:/root/.secrets/cloudflare.ini
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CF_API_EMAIL=paitong1550@gmail.com
+      - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
+    command: certificates
+    entrypoint: |
+      /bin/sh -c '
+      apk add --no-cache docker-cli
+      trap exit TERM
+      while :; do
+        certbot renew --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini --quiet
+        docker exec $(docker ps -q -f name=nginx) nginx -s reload
+        sleep 3d & wait $${!}
+      done'
+    depends_on:
+      - nginx
 
   db:
     image: postgres:13

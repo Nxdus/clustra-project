@@ -126,7 +126,7 @@ export default function Page() {
                             )}
                             <Link href={`/${locale}/docs`}>
                                 <Button variant="outline" size="lg" className="border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950">
-                                    {t('hero.learnMore')}
+                                    {t('hero.documentation')}
                                 </Button>
                             </Link>
                         </motion.div>

@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://clustra.tech';
 
     const checkout_price = isAnnual ? process.env.STRIPE_ANNUAL_PRICE_ID : process.env.STRIPE_MONTHLY_PRICE_ID
 
