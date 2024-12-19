@@ -44,7 +44,6 @@
     "annually": "Annually",
     "popular": "Popular",
     "savePercent": "Save 25%",
-
     "free": {
       "title": "Free",
       "description": "For individual users",
@@ -78,6 +77,36 @@
         "support": "24/7 Support",
         "api": "Full API Access",
         "custom": "Custom Solutions"
+      }
+    }
+  },
+  "documentary": {
+    "title": "Documentation",
+    "introduction": {
+      "title": "Introduction",
+      "content": "Clustra - Video Conversion provides an easy and fast way to convert MP4 video files to M3U8, store your files on the cloud, and generate shareable HLS streaming links. Additionally, it allows flexible security settings for streaming links to manage access permissions."
+    },
+    "faq": {
+      "title": "FAQ",
+      "m3u8Question": "What is M3U8?",
+      "m3u8Description": "M3U8 is a file format used for video streaming via HLS (HTTP Live Streaming), a standard developed by Apple. An M3U8 file contains links to small video segments, enabling smooth streaming even under unstable network conditions.",
+      "m3u8AdditionalDescription": "M3U8 files are widely used in streaming platforms like video streaming websites, applications, and OTT services. They support adaptive streaming to automatically adjust video quality based on internet speed, ensuring continuous and high-quality playback.",
+      "hlsQuestion": "What is HLS?",
+      "hlsDescription": "HLS, or HTTP Live Streaming, is a protocol developed by Apple for efficient video delivery over the internet. It divides a video into smaller segments and uses a playlist file (e.g., M3U8) to define the playback order. Viewers can experience smooth streaming with adaptive bitrate technology, even on unstable networks.",
+      "libraryQuestion": "What libraries support HLS?",
+      "libraryDesription": "To play HLS videos on your website or application, you can use the following libraries for convenient and effective implementation:",
+      "libraryAdditionalDescription": "Using these libraries helps enhance your HLS video streaming capabilities and customize the playback experience to suit your platform.",
+      "libraryRecommend": {
+        "HLSjs": "HLS.js",
+        "HLSjsDescription": " - A lightweight JavaScript library for playing HLS on browsers that do not support HLS natively, such as Chrome and Firefox.",
+        "Videojs": "Video.js",
+        "VideojsDescription": " - A popular media player that supports HLS through the videojs-http-streaming (VHS) plugin and offers extensive UI customization.",
+        "ShakaPlayer": "Shaka Player",
+        "ShakaPlayerDescription": " - A Google library supporting both HLS and DASH, focusing on DRM management and advanced features.",
+        "Clappr": "Clappr",
+        "ClapprDescription": " - An open-source media player supporting HLS with easy customization to fit diverse needs.",
+        "Plyr": "Plyr",
+        "PlyrDescription": " - A lightweight and beautiful media player that supports HLS via HLS.js."
       }
     }
   },

@@ -109,9 +109,15 @@
       "libraryAdditionalDescription": "การใช้ไลบรารีเหล่านี้จะช่วยให้คุณสามารถเพิ่มความสามารถในการสตรีมวิดีโอ HLS และปรับแต่งการแสดงผลให้เหมาะสมกับแพลตฟอร์มของคุณมากขึ้น",
       "libraryRecommend": {
         "HLSjs": "HLS.js",
-        "HLSjsTitle": " - ไลบรารี JavaScript ขนาดเล็ก",
-        "HLSjsDescription": "สำหรับการเล่น HLS บนเบราว์เซอร์ที่ไม่รองรับ HLS โดยตรง เช่น Chrome และ Firefox"
-
+        "HLSjsDescription": " - ไลบรารี JavaScript ขนาดเล็ก สำหรับการเล่น HLS บนเบราว์เซอร์ที่ไม่รองรับ HLS โดยตรง เช่น Chrome และ Firefox",
+        "Videojs": "Video.js",
+        "VideojsDescription": " - Media Player ยอดนิยม รองรับ HLS ผ่าน Plugin videojs-http-streaming (VHS) และสามารถปรับแต่ง UI ได้หลากหลาย",
+        "ShakaPlayer": "Shaka Player",
+        "ShakaPlayerDescription": " - ไลบรารีจาก Google รองรับทั้ง HLS และ DASH โดยเน้นการจัดการ DRM และคุณสมบัติขั้นสูง",
+        "Clappr": "Clappr",
+        "ClapprDescription": " - Media Player แบบ Open Source ที่รองรับ HLS และปรับแต่งได้ง่ายเพื่อตอบโจทย์การใช้งานที่หลากหลาย",
+        "Plyr": "Plyr",
+        "PlyrDescription": " - Media Player น้ำหนักเบาและสวยงาม รองรับ HLS ผ่าน HLS.js"
       }
     }
   },
