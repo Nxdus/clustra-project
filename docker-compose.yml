@@ -59,7 +59,7 @@ services:
     environment:
       - CF_API_EMAIL=paitong1550@gmail.com
       - CF_API_KEY=f97fefab948554e23434b12f91f706b1a39ac
-    command: certificates
+    command: certbot certonly --dns-cloudflare --dns-cloudflare-credentials /root/.secrets/cloudflare.ini -d clustra.tech -d www.clustra.tech
     # entrypoint: |
     #   /bin/sh -c '
     #   apk add --no-cache docker-cli
@@ -69,8 +69,8 @@ services:
     #     docker exec $(docker ps -q -f name=nginx) nginx -s reload
     #     sleep 3d & wait $$!
     #   done'
-    depends_on:
-      - nginx
+    # depends_on:
+    #   - nginx
 
   db:
     image: postgres:13
