@@ -18,11 +18,13 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export default function DocPage() {
     const locale = useLocale()
+    const t = useTranslations()
+
     return (
         <SidebarProvider>
             <DocsSidebar />
@@ -34,11 +36,11 @@ export default function DocPage() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">Documentation</BreadcrumbLink>
+                                    <BreadcrumbLink href="#">t('documentary.title')</BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Introduction</BreadcrumbPage>
+                                    <BreadcrumbPage>t('documentary.introduction.title')</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
@@ -57,65 +59,53 @@ export default function DocPage() {
                     <article className="space-y-20">
                         <section className="space-y-4">
                             <h1 className="text-4xl font-bold">
-                                Introduction
+                                {t('documentary.introduction.title')}
                             </h1>
                             <p className="text-lg text-muted-foreground">
-                                Clustra - Video Conversion ให้บริการแปลงไฟล์วิดีโอ MP4 เป็น M3U8 ได้อย่างสะดวกและรวดเร็ว
-                                พร้อมทั้งจัดเก็บไฟล์ของคุณบนระบบคลาวด์ และสร้างลิงก์สำหรับแชร์วิดีโอในรูปแบบ HLS
-                                อีกทั้งยังสามารถตั้งค่าความปลอดภัยของลิงก์สตรีมมิ่งเพื่อกำหนดสิทธิ์การเข้าถึงได้อย่างยืดหยุ่น
+                                {t('documentary.introduction.content')}
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="text-2xl font-semibold">FAQ</h2>
+                            <h2 className="text-2xl font-semibold">{t('documentary.faq.title')}</h2>
                             <Accordion type="single" collapsible className="w-full">
                                 <AccordionItem value="item-1">
                                     <AccordionTrigger>
-                                        <h3 className="font-medium">M3U8 คืออะไร?</h3>
+                                        <h3 className="font-medium">{t('documentary.faq.m3u8Question')}</h3>
                                     </AccordionTrigger>
                                     <AccordionContent>
                                         <p>
-                                            M3U8 เป็นไฟล์สำหรับการสตรีมวิดีโอแบบ HLS (HTTP Live Streaming) ซึ่งเป็นมาตรฐานที่พัฒนาโดย Apple
-                                            โดยภายในไฟล์ M3U8 จะประกอบด้วยลิงก์ไปยังวิดีโอชิ้นเล็ก ๆ (Segments)
-                                            เพื่อให้การสตรีมสามารถรับมือกับความไม่เสถียรของเครือข่ายและส่งมอบประสบการณ์ที่ราบรื่นต่อผู้รับชม
+                                            {t('documentary.faq.m3u8Description')}
                                         </p>
                                         <p>
-                                            ไฟล์ M3U8 ถูกนำมาใช้อย่างแพร่หลายในแพลตฟอร์มสตรีมมิ่ง
-                                            เช่น เว็บไซต์สตรีมวิดีโอ แอปพลิเคชัน และบริการ OTT
-                                            และยังรองรับการปรับคุณภาพของวิดีโออัตโนมัติตามความเร็วอินเทอร์เน็ต (Adaptive Streaming)
-                                            เพื่อการเล่นวิดีโอที่ต่อเนื่องและมีคุณภาพ
+                                            {t('documentary.faq.m3u8AdditionalDescription')}
                                         </p>
                                     </AccordionContent>
                                 </AccordionItem>
 
                                 <AccordionItem value="item-2">
                                     <AccordionTrigger>
-                                        <h3 className="font-medium">HLS คืออะไร?</h3>
+                                        <h3 className="font-medium">{t('documentary.faq.hlsQuestion')}</h3>
                                     </AccordionTrigger>
                                     <AccordionContent>
                                         <p>
-                                            HLS หรือ HTTP Live Streaming เป็นโปรโตคอลที่พัฒนาโดย Apple
-                                            เพื่อส่งมอบวิดีโอผ่านอินเทอร์เน็ตอย่างมีประสิทธิภาพ
-                                            HLS จะทำการแบ่งวิดีโอออกเป็นส่วนย่อย ๆ (Segments) และใช้ไฟล์ Playlist (เช่น M3U8)
-                                            ในการกำหนดลำดับการเล่น ผู้ชมสามารถรับชมวิดีโอด้วยคุณภาพที่ปรับตามความเร็วอินเทอร์เน็ต (Adaptive Bitrate Streaming)
-                                            ทำให้การสตรีมลื่นไหลแม้ในกรณีที่เครือข่ายไม่เสถียร
+                                            {t('documentary.faq.hlsDescription')}
                                         </p>
                                     </AccordionContent>
                                 </AccordionItem>
 
                                 <AccordionItem value="item-3">
                                     <AccordionTrigger>
-                                        <h3 className="font-medium">ไลบรารีที่รองรับ HLS มีอะไรบ้าง?</h3>
+                                        <h3 className="font-medium">{t('documentary.faq.libraryQuestion')}</h3>
                                     </AccordionTrigger>
                                     <AccordionContent>
                                         <p className="mb-2">
-                                            ในการเล่นวิดีโอ HLS บนเว็บไซต์หรือแอปพลิเคชัน
-                                            คุณสามารถใช้ไลบรารีดังต่อไปนี้เพื่อให้การใช้งานเป็นไปอย่างสะดวกและมีประสิทธิภาพ:
+                                            {t('documentary.faq.libraryDesription')}
                                         </p>
                                         <ul className="list-disc list-inside space-y-2">
                                             <li>
-                                                <strong>HLS.js</strong> - ไลบรารี JavaScript ขนาดเล็ก
-                                                สำหรับการเล่น HLS บนเบราว์เซอร์ที่ไม่รองรับ HLS โดยตรง เช่น Chrome และ Firefox
+                                                <strong>{t('documentary.faq.libraryRecommend.HLSjs')}</strong>{t('documentary.faq.libraryRecommend.HLSjsTitle')}
+                                                {t('documentary.faq.libraryRecommend.HLSjsDescription')}
                                             </li>
                                             <li>
                                                 <strong>Video.js</strong> - Media Player ยอดนิยม
@@ -135,8 +125,7 @@ export default function DocPage() {
                                             </li>
                                         </ul>
                                         <p className="mt-2">
-                                            การใช้ไลบรารีเหล่านี้จะช่วยให้คุณสามารถเพิ่มความสามารถในการสตรีมวิดีโอ HLS
-                                            และปรับแต่งการแสดงผลให้เหมาะสมกับแพลตฟอร์มของคุณมากขึ้น
+                                            {t('documentary.faq.libraryAdditionalDescription')}
                                         </p>
                                     </AccordionContent>
                                 </AccordionItem>
