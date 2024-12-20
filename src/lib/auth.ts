@@ -32,6 +32,17 @@ export const authOptions: AuthOptions = {
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        secure: true, // ใช้ HTTPS
+        sameSite: 'none', // อนุญาต Cross-Origin
+        domain: '.clustra.tech', // แชร์ Cookies ข้าม Subdomain
+      },
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
