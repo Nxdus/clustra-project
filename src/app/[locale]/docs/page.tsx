@@ -25,6 +25,23 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Metadata } from "next";
+
+// แก้ไข type ของ generateMetadata
+export async function generateMetadata(): Promise<Metadata> {
+    const t = useTranslations();
+  
+    try {
+      // Metadata object
+      return {
+        title: t('meta.docsTitle'),
+        description: t('meta.description') || "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control.",
+        keywords: "Clustra, mp4 to m3u8, video converter, m3u8 generator, video streaming, URL streaming, streaming access control, domain-restricted streaming, public streaming, video hosting, microsaas video service, video file conversion, secure video streaming, video transcoding, cloud video storage, video on demand, HLS streaming, video file management, Clustra microsaas, Clustra video service",
+      }
+    } catch {
+      return { title: 'Default Title' };
+    }
+  }
 
 export default function DocPage() {
   const locale = useLocale();

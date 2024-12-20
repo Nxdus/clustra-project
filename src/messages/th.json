@@ -1,6 +1,8 @@
 {
   "meta": {
-    "title": "Clustra - แปลงไฟล์วิดีโอ",
+    "title": "Clustra - แปลงไฟล์ M3U8",
+    "docsTitle": "Clustra - เอกสารประกอบ",
+    "dashboardTitle": "Clustra - แดชบอร์ด",
     "description": "Clustra - ลดความซับซ้อนของการสตรีมวิดีโอด้วยการแปลง MP4 เป็น M3U8 การสตรีม URL ที่ปลอดภัย และการควบคุมการเข้าถึงแบบกำหนดเอง"
   },
   "nav": {

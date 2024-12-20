@@ -1,6 +1,8 @@
 {
   "meta": {
-    "title": "Clustra - Video Conversion",
+    "title": "Clustra - M3U8 Conversion",
+    "docsTitle": "Clustra - Documentation",
+    "dashboardTitle": "Clustra - Dashboard",
     "description": "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control."
   },
   "nav": {

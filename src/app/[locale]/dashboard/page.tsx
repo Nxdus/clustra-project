@@ -14,6 +14,23 @@ import { Button } from "@/components/ui/button"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { useTranslations } from 'next-intl'
 import { CancelSubscriptionButton } from "@/components/cancel-subscription-button"
+import { Metadata } from 'next';
+
+// แก้ไข type ของ generateMetadata
+export async function generateMetadata(): Promise<Metadata> {
+  const t = useTranslations();
+
+  try {
+    // Metadata object
+    return {
+      title: t('meta.dashboardTitle'),
+      description: t('meta.description') || "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control.",
+      keywords: "Clustra, mp4 to m3u8, video converter, m3u8 generator, video streaming, URL streaming, streaming access control, domain-restricted streaming, public streaming, video hosting, microsaas video service, video file conversion, secure video streaming, video transcoding, cloud video storage, video on demand, HLS streaming, video file management, Clustra microsaas, Clustra video service",
+    }
+  } catch {
+    return { title: 'Default Title' };
+  }
+}
 
 export default function Dashboard() {
   const { data: session } = useSession()
@@ -108,8 +125,8 @@ export default function Dashboard() {
         throw new Error('Failed to update access');
       }
 
-      setVideos(prevVideos => 
-        prevVideos.map(video => 
+      setVideos(prevVideos =>
+        prevVideos.map(video =>
           video.id === videoId ? { ...video, isPublic } : video
         )
       );
@@ -165,10 +182,10 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.6,
               type: "spring",
-              stiffness: 100 
+              stiffness: 100
             }}
             whileHover={{ scale: 1.02 }}
           >
@@ -180,7 +197,7 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ 
+            transition={{
               duration: 0.6,
               type: "spring",
               stiffness: 100,
@@ -195,11 +212,11 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ 
+          transition={{
             duration: 0.7,
             type: "spring",
             stiffness: 80,
-            delay: 0.2 
+            delay: 0.2
           }}
           whileHover={{ y: -5 }}
           className="mt-8"
@@ -211,7 +228,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : (
-            <VideoCard 
+            <VideoCard
               videos={videos}
               onUploadComplete={fetchVideos}
               onDelete={handleDelete}
