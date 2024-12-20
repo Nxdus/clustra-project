@@ -279,7 +279,6 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
         pageIndex: 0,
         pageSize: 5,
     })
-    const [globalFilter, setGlobalFilter] = useState('')
 
     const columns: ColumnDef<Video>[] = [
         {
@@ -327,28 +326,17 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
         data: videos,
         columns,
         state: {
-            pagination,
-            globalFilter
+            pagination
         },
         onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        globalFilterFn: "includesString",
     })
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center gap-4">
-                <Input
-                    placeholder={t('video.search.placeholder')}
-                    value={globalFilter ?? ''}
-                    onChange={event => setGlobalFilter(event.target.value)}
-                    className="h-8 w-[250px] text-sm"
-                />
-            </div>
-
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
