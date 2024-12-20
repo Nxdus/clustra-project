@@ -41,6 +41,11 @@ export default function Dashboard() {
   const refreshStats = React.useCallback(async () => {
     try {
       const response = await axios.get('/api/user/info');
+
+      if (response.status !== 200) {
+        throw new Error('failed to fecth user info')
+      }
+
       setVideos(prevVideos => {
         const updatedVideos = [...prevVideos];
         return updatedVideos;
