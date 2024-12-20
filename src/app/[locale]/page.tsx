@@ -223,10 +223,22 @@ export default function Page() {
                                         </li>
                                     </ul>
                                 </div>
-                                <Button className="w-full mt-12 group transition-all duration-300 hover:shadow-md">
-                                    {t('pricing.free.action')}
-                                    <motion.span className="ml-2" whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>→</motion.span>
-                                </Button>
+                                {session ? (
+                                <Link href={`/${locale}/dashboard`}>
+                                    <Button className="w-full mt-12 group transition-all duration-300 hover:shadow-md">
+                                        {t('pricing.free.action')}
+                                        <motion.span className="ml-2" whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>→</motion.span>
+                                    </Button>
+                                </Link>
+                            ) : (
+                                <SignInDialog>
+                                   <Button className="w-full mt-12 group transition-all duration-300 hover:shadow-md">
+                                        {t('pricing.free.action')}
+                                        <motion.span className="ml-2" whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>→</motion.span>
+                                    </Button>
+                                </SignInDialog>
+                            )}
+
                             </CardHeader>
                         </Card>
 
