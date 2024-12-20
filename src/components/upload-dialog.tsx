@@ -75,8 +75,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
           setUploadStatus('error');
           setIsUploading(false);
           toast({
-            title: t("video.upload.toast.upload.error.title"),
-            description: t("video.upload.toast.upload.error.description"),
+            title: t("video.toast.upload.error.title"),
+            description: t("video.toast.upload.error.description"),
             variant: "destructive"
           });
           if (interval) clearInterval(interval);
@@ -92,8 +92,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
           setIsOpen(false);
           await onUploadComplete();
           toast({
-            title: t('video.upload.toast.upload.success.title'),
-            description: t('video.upload.toast.upload.success.description')
+            title: t('video.toast.upload.success.title'),
+            description: t('video.toast.upload.success.description')
           });
         }
       }, 2000);
@@ -133,14 +133,14 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       setJobId(data.jobId);
 
       toast({
-        title: t('video.upload.toast.upload.success.title'),
-        description: t('video.upload.toast.upload.success.description')
+        title: t('video.toast.upload.success.title'),
+        description: t('video.toast.upload.success.description')
       });
 
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({
-          title: t('video.upload.toast.upload.error.title'),
+          title: t('video.toast.upload.error.title'),
           description: err.message,
           variant: "destructive"
         });

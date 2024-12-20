@@ -2,7 +2,7 @@ import { prisma } from '../lib/prisma';
 import ffmpeg from 'fluent-ffmpeg';
 import * as fs from 'fs';
 import * as path from 'path';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectsCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
 import { CloudFrontClient, CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
 import { promisify } from 'util';
 import { pipeline } from 'stream';
@@ -24,6 +24,27 @@ const cloudFrontClient = new CloudFrontClient({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   }
 });
+
+async function deleteOriginalFileS3(s3Filekey: string) {
+
+  const listParams = {
+    Bucket: process.env.AWS_BUCKET_NAME!,
+    Prefix: s3Filekey
+  }
+
+  const { Contents } = await s3Client.send(new ListObjectsV2Command(listParams))
+
+  if (Contents && Contents.length > 0) {
+    const deleteParams = {
+      Bucket: process.env.AWS_BUCKET_NAME!,
+      Delete: {
+        Objects: Contents.map(({ Key }) => ({ Key: Key! }))
+      }
+    }
+
+    await s3Client.send(new DeleteObjectsCommand(deleteParams))
+  }
+}
 
 async function downloadFromS3(key: string, localPath: string) {
   const { GetObjectCommand } = await import("@aws-sdk/client-s3");
@@ -120,8 +141,11 @@ async function processPendingJobs() {
         await uploadToS3(`converted/${encodedFileName}/${segmentFile}`, fs.readFileSync(segmentPath), 'video/MP2T');
       }
 
-      // คำนวน fileSize
-      let totalSize = m3u8FileBuffer.length;
+      // ลบไฟล์ต้นฉบับ
+      await deleteOriginalFileS3(originalKey)
+
+        // คำนวน fileSize
+        let totalSize = m3u8FileBuffer.length;
       for (const seg of segmentFiles) {
         const segPath = path.join(outputDir, seg);
         totalSize += fs.statSync(segPath).size;

@@ -35,7 +35,8 @@ export async function DELETE(req: Request) {
       select: {
         id: true,
         userId: true,
-        fileSize: true
+        fileSize: true,
+        key: true
       }
     })
 
@@ -61,7 +62,7 @@ export async function DELETE(req: Request) {
       })
     ])
 
-    const s3Filekey = fileKey.split('/').slice(0, -1).join('/')
+    const s3Filekey = video.key
 
     // ลบไฟล์จาก S3
     const listParams = {
