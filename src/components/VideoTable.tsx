@@ -82,6 +82,7 @@ const AccessControl = React.memo(({ video, onUpdateAccess }: { video: Video, onU
         />
     );
 });
+
 AccessControl.displayName = 'AccessControl';
 
 const TitleCell = ({ row, onRename }: {
@@ -327,12 +328,14 @@ export function VideoTable({ videos, onDelete, onUpdateAccess, onRename, onRefre
         columns,
         state: {
             pagination,
+            globalFilter
         },
         onPaginationChange: setPagination,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        globalFilterFn: "includesString",
     })
 
     return (
