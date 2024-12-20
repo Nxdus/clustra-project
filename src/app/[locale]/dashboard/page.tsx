@@ -14,23 +14,7 @@ import { Button } from "@/components/ui/button"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
 import { useTranslations } from 'next-intl'
 import { CancelSubscriptionButton } from "@/components/cancel-subscription-button"
-import { Metadata } from 'next';
-
-// แก้ไข type ของ generateMetadata
-export async function generateMetadata(): Promise<Metadata> {
-  const t = useTranslations();
-
-  try {
-    // Metadata object
-    return {
-      title: t('meta.dashboardTitle'),
-      description: t('meta.description') || "Clustra - Simplify video streaming with MP4 to M3U8 conversion, secure URL streaming, and custom access control.",
-      keywords: "Clustra, mp4 to m3u8, video converter, m3u8 generator, video streaming, URL streaming, streaming access control, domain-restricted streaming, public streaming, video hosting, microsaas video service, video file conversion, secure video streaming, video transcoding, cloud video storage, video on demand, HLS streaming, video file management, Clustra microsaas, Clustra video service",
-    }
-  } catch {
-    return { title: 'Default Title' };
-  }
-}
+import axios from 'axios';
 
 export default function Dashboard() {
   const { data: session } = useSession()
@@ -40,14 +24,10 @@ export default function Dashboard() {
 
   const fetchVideos = React.useCallback(async () => {
     try {
-      const response = await fetch(`/api/videos?userId=${session?.user?.id}`, {
-        cache: 'no-store'
+      const response = await axios.get(`/api/videos?userId=${session?.user?.id}`, {
+        headers: { 'Cache-Control': 'no-store' }
       });
-      if (!response.ok) {
-        throw new Error('Failed to fetch videos');
-      }
-      const data = await response.json();
-      setVideos(data.videos || []);
+      setVideos(response.data.videos || []);
       setIsLoading(false);
     } catch {
       toast({
@@ -60,11 +40,7 @@ export default function Dashboard() {
 
   const refreshStats = React.useCallback(async () => {
     try {
-      const response = await fetch('/api/user/info');
-      if (!response.ok) {
-        throw new Error('Failed to fetch user info');
-      }
-      await response.json();
+      const response = await axios.get('/api/user/info');
       setVideos(prevVideos => {
         const updatedVideos = [...prevVideos];
         return updatedVideos;
@@ -85,11 +61,9 @@ export default function Dashboard() {
     if (!confirmDelete) return
 
     try {
-      const response = await fetch(`/api/delete-file?fileKey=${fileKey}`, {
-        method: 'DELETE',
-      })
+      const response = await axios.delete(`/api/delete-file?fileKey=${fileKey}`);
 
-      if (response.ok) {
+      if (response.status === 200) {
         toast({
           title: t('success.deleteVideo'),
           description: t('success.deleteVideoDesc')
@@ -97,7 +71,7 @@ export default function Dashboard() {
         setVideos((prevVideos) => prevVideos.filter(video => video.fileKey !== fileKey))
         await refreshStats()
       } else {
-        const { message } = await response.json()
+        const { message } = response.data;
         toast({
           title: t('error.title'),
           description: message || t('error.deleteVideo'),
@@ -115,13 +89,12 @@ export default function Dashboard() {
 
   const handleUpdateAccess = async (videoId: string, isPublic: boolean) => {
     try {
-      const response = await fetch('/api/videos/access', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId, isPublic })
+      const response = await axios.patch('/api/videos/access', {
+        videoId,
+        isPublic
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error('Failed to update access');
       }
 
@@ -241,4 +214,12 @@ export default function Dashboard() {
       </div>
     </div>
   )
+}
+
+export function generateMetadata() {
+  const t = useTranslations()
+  return {
+    title: t('meta.dashboardTitle'),
+    description: t('meta.dashboardDescription'),
+  }
 } 

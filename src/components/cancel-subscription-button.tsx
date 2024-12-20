@@ -17,6 +17,7 @@ import {
 
 import { useTranslations } from "next-intl";
 import { useToast } from "@/hooks/use-toast";
+import axios from 'axios';
 
 export function CancelSubscriptionButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +29,8 @@ export function CancelSubscriptionButton() {
   useEffect(() => {
     const checkSubscription = async () => {
       try {
-        const response = await fetch('/api/subscription/check');
-        const data = await response.json();
+        const response = await axios.get('/api/subscription/check');
+        const data = response.data;
         setHasActiveSubscription(data.hasActiveSubscription);
       } catch (error) {
         console.error('Error checking subscription:', error);
@@ -42,13 +43,12 @@ export function CancelSubscriptionButton() {
   const handleCancel = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/subscription/cancel', {
-        method: 'POST',
-      });
+      
+      const response = await axios.post('/api/subscription/cancel');
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error(data.error || 'Failed to cancel subscription');
       }
 

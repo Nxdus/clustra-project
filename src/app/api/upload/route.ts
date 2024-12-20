@@ -38,6 +38,7 @@ export async function POST(req: Request) {
 
   // Upload original file to S3
   const arrayBuffer = await file.arrayBuffer();
+  
   await s3Client.send(new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: `original/${encodedFileName}.mp4`,

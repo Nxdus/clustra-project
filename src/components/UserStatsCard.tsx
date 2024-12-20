@@ -6,6 +6,7 @@ import { Rocket, HardDrive, Upload } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useTranslations } from 'next-intl'
 import { UpgradeButton } from "./upgrade-button"
+import axios from 'axios';
 
 interface UserStatsCardProps {
   totalStorageUsed: number
@@ -20,9 +21,9 @@ export function UserStatsCard({ totalStorageUsed }: UserStatsCardProps) {
   React.useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('/api/user/info');
-        const data = await response.json();
-        if (response.ok) {
+        const response = await axios.get('/api/user/info');
+        const data = response.data;
+        if (response.status === 200) {
           setUserRole(data.role);
           setMonthlyUploads(data.monthlyUploads);
         }

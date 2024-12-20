@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/hooks/use-toast";
 import { useDropzone } from 'react-dropzone';
 import { cn } from "@/lib/utils";
+import axios from 'axios';
 // Dialog, DialogContent, etc. คือ component UI ของคุณเอง
 import {
   Dialog,
@@ -66,8 +67,9 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
     let interval: NodeJS.Timeout | null = null;
     if (jobId) {
       interval = setInterval(async () => {
-        const res = await fetch(`/api/upload-status?jobId=${jobId}`);
-        const data = await res.json();
+        const res = await axios.get(`/api/upload-status?jobId=${jobId}`);
+        const data = res.data;
+        
         if (data.error) {
           setUploadStatus('error');
           setIsUploading(false);
@@ -112,17 +114,18 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
     formData.append("file", file);
 
     try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+      const response = await axios.post("/api/upload", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (response.status !== 200) {
+        const errorData = response.data;
         throw new Error(errorData.message || "Upload error");
       }
 
-      const data = await response.json();
+      const data = response.data;
       setJobId(data.jobId);
 
       toast({
@@ -158,7 +161,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         } else {
           toast({
             title: "ไม่สามารถปิดได้",
-            description: "งานกำลังอัปโหลดหรือประมวลผลอยู่",
+            description: "งานกำลังอัปโหลดหรือประมวลผลอย���่",
             variant: "destructive"
           });
         }
@@ -214,7 +217,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
               ) : (
                 <>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">ลากและวางไฟล์ที่นี่ หรือคลิกเพื่อเลือก</p>
+                    <p className="text-sm font-medium">ลากและวางไฟล์ที่นี่ หรือคลิ��เพื่อเลือก</p>
                     <p className="text-xs text-gray-500">รองรับเฉพาะ MP4</p>
                   </div>
                 </>

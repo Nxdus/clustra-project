@@ -20,6 +20,7 @@ import { VideoDialog } from "./VideoDialog"
 import { Input } from "./ui/input"
 import { useState } from "react"
 import { useTranslations, useLocale } from 'next-intl'
+import axios from 'axios';
 
 interface VideoTableProps {
     videos: Video[]
@@ -42,16 +43,12 @@ const AccessControl = React.memo(({ video, onUpdateAccess }: { video: Video, onU
         try {
             setIsUpdating(true);
 
-            const response = await fetch('/api/videos/access', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    videoId: video.id,
-                    isPublic: !isPublic
-                })
+            const response = await axios.patch('/api/videos/access', {
+                videoId: video.id,
+                isPublic: !isPublic
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Failed to update access');
             }
 
@@ -98,16 +95,12 @@ const TitleCell = ({ row, onRename }: {
 
     const handleRename = async () => {
         try {
-            const response = await fetch('/api/videos/rename', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    videoId: video.id,
-                    displayName: newName
-                })
+            const response = await axios.patch('/api/videos/rename', {
+                videoId: video.id,
+                displayName: newName
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Failed to rename video');
             }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { motion } from "framer-motion"
 import { Input } from "./ui/input"
 import { signIn } from 'next-auth/react'
+import axios from 'axios';
 
 const SignUpForm = () => {
     const [email, setEmail] = useState('')
@@ -10,30 +11,33 @@ const SignUpForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        const response = await fetch('/api/auth/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        })
+        try {
+            const response = await axios.post('/api/auth/signup', {
+                email,
+                password
+            });
 
-        if (response.ok) {
-            console.log('User registered successfully')
-            const body = await response.json()
-            const user = body.user
-            const { email, password } = user
+            if (response.status === 200) {
+                console.log('User registered successfully')
+                const body = response.data
+                const user = body.user
+                const { email, password } = user
 
-            signIn('credentials', {
-                email: email,
-                password: password,
-                callbackUrl: process.env.NEXTAUTH_URL,
-                redirect: true
-            })
-
-        } else {
-            const errorData = await response.json()
-            console.error(errorData.message)
+                signIn('credentials', {
+                    email: email,
+                    password: password,
+                    callbackUrl: process.env.NEXTAUTH_URL,
+                    redirect: true
+                })
+            } else {
+                console.error('Registration failed');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error(error.response?.data.message || 'An error occurred');
+            } else {
+                console.error('An unexpected error occurred');
+            }
         }
     }
 

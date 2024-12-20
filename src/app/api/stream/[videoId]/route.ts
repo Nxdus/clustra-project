@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSignedUrl } from "@aws-sdk/cloudfront-signer";
 import { prisma } from "@/lib/prisma";
+import axios from 'axios';
 
 export async function GET(
   request: Request,
@@ -43,16 +44,17 @@ export async function GET(
       dateLessThan: new Date(Date.now() + 24 * 3600 * 1000).toISOString()
     });
 
-    const response = await fetch(m3u8SignedUrl);
-    if (!response.ok) {
+    const response = await axios.get(m3u8SignedUrl);
+    
+    if (response.status !== 200) {
       throw new Error(`Failed to fetch m3u8: ${response.statusText}`);
     }
     
-    let content = await response.text();
+    let content = response.data;
 
     const basePath = video.key.substring(0, video.key.lastIndexOf('/'));
     
-    content = content.replace(/^(.+\.ts)$/gm, (match) => {
+    content = content.replace(/^(.+\.ts)$/gm, (match: string) => {
       const tsUrl = getSignedUrl({
         url: `https://${process.env.CLOUDFRONT_DOMAIN}/${basePath}/${match}`,
         keyPairId: process.env.CLOUDFRONT_KEY_PAIR_ID!,

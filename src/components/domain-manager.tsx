@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast"
 import { AllowedDomain } from "@/types/domain"
 import { useSession } from "next-auth/react"
 import { useTranslations } from 'next-intl'
+import axios from 'axios';
 
 const ITEMS_PER_PAGE = 2;
 
@@ -21,9 +22,9 @@ export function DomainManager() {
   React.useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch('/api/user/info')
-        const data = await response.json()
-        if (response.ok) {
+        const response = await axios.get('/api/user/info');
+        const data = response.data;
+        if (response.status === 200) {
           setUserRole(data.role)
         }
       } catch (error) {
@@ -50,9 +51,9 @@ export function DomainManager() {
 
   const fetchDomains = useCallback(async () => {
     try {
-      const response = await fetch('/api/domains')
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error)
+      const response = await axios.get('/api/domains');
+      const data = response.data;
+      if (response.status !== 200) throw new Error(data.error)
       setDomains(data.domains)
     } catch {
       toast({
@@ -65,11 +66,9 @@ export function DomainManager() {
 
   const handleDelete = async (domainId: string) => {
     try {
-      const response = await fetch(`/api/domains/delete?id=${domainId}`, {
-        method: 'DELETE',
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.error)
+      const response = await axios.delete(`/api/domains/delete?id=${domainId}`);
+      const data = response.data;
+      if (response.status !== 200) throw new Error(data.error)
       
       toast({
         title: t('success.title'),
@@ -102,15 +101,13 @@ export function DomainManager() {
 
     try {
       setIsLoading(true)
-      const response = await fetch('/api/domains', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domain: domain.trim() })
-      })
+      const response = await axios.post('/api/domains', {
+        domain: domain.trim()
+      });
 
-      const data = await response.json()
+      const data = response.data;
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error(data.error || 'Failed to add domain')
       }
 

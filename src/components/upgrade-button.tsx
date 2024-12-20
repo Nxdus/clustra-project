@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRight } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { cn } from "@/lib/utils";
+import axios from 'axios';
 
 interface UpgradeButtonProps {
   isAnnual: boolean;
@@ -20,15 +21,13 @@ export function UpgradeButton({
   const handleUpgrade = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isAnnual })
+      const response = await axios.post('/api/checkout', {
+        isAnnual
       });
 
-      const data = await response.json();
+      const data = response.data;
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error(data.error);
       }
 
