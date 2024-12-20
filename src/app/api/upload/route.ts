@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { randomBytes } from 'crypto';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { Readable } from 'stream';
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -38,12 +37,12 @@ export async function POST(req: Request) {
   const encodedFileName = encodeURIComponent(fileName);
 
   // Upload original file to S3
-  const stream = Readable.from(file.stream() as unknown as Iterable<Uint8Array>);
+  const arrayBuffer = await file.arrayBuffer();
 
   await s3Client.send(new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME!,
     Key: `original/${encodedFileName}.mp4`,
-    Body: stream,
+    Body: Buffer.from(arrayBuffer),
     ContentType: 'video/mp4',
     ACL: 'private',
   }));
