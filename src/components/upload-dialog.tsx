@@ -55,7 +55,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         }
       }
     }
-  }, []);
+  }, [t]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -101,7 +101,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [jobId, onUploadComplete]);
+  }, [jobId, onUploadComplete, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
