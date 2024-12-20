@@ -330,21 +330,54 @@
     "love": "Made with ❤️ by _.ptxz"
   },
   "upload": {
-    "title": "Upload Video",
-    "description": "Select a video file to upload",
+    "title": "Upload Video File",
+    "description": "Upload your video with just one click",
     "button": "Upload Video",
-    "dropzone": {
-      "title": "Drop files here",
-      "description": "or click to select files",
-      "maxSize": "Max file size: {size}MB"
+    "dragDrop": "Drag and drop your video file here or click to select a file",
+    "supportedFormats": "Only MP4 files are supported",
+    "uploadButton": "Upload File",
+    "uploading": "Uploading...",
+    "processing": "Processing...",
+    "processingStatus": "Processing video file... ({progress}%)",
+    "uploadingStatus": "Uploading file... ({progress}%)",
+    "completed": "Upload Completed",
+    "cannotClose": {
+      "title": "Cannot Close",
+      "description": "An upload or processing task is currently in progress"
     },
-    "progress": {
-      "uploading": "Uploading...",
-      "converting": "Converting...",
-      "success": "Upload successful",
-      "error": "Upload failed"
+    "waitProcessing": "Please wait until the file processing is complete",
+    "waitUploading": "Please wait until the upload is complete",
+    "uploadSuccess": "Upload Successful",
+    "uploadComplete": "Your file has been successfully uploaded",
+    "uploadCanceled": "Upload Canceled",
+    "uploadError": "An error occurred while uploading the file",
+    "limitReached": {
+      "title": "Upload Limit Reached",
+      "description": "You have exceeded your upload limit. Please upgrade your plan to increase the limit"
+    },
+    "leaveConfirm": "An upload is in progress. Are you sure you want to leave this page?",
+    "toast": {
+      "upload": {
+        "success": {
+          "title": "Upload Successful",
+          "description": "Your file has been successfully uploaded"
+        },
+        "error": {
+          "title": "Error Occurred",
+          "description": "Unable to upload the file"
+        },
+        "cancel": {
+          "title": "Upload Canceled",
+          "description": "The upload has been canceled"
+        },
+        "limit": {
+          "title": "Limit Exceeded",
+          "description": "You have exceeded your upload limit. Please upgrade your plan"
+        }
+      }
     }
   },
+
   "videoDialog": {
     "title": "Play Video",
     "description": "Watch your video",

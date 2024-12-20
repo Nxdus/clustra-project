@@ -9,7 +9,6 @@ import { toast } from "@/hooks/use-toast";
 import { useDropzone } from 'react-dropzone';
 import { cn } from "@/lib/utils";
 import axios from 'axios';
-// Dialog, DialogContent, etc. คือ component UI ของคุณเอง
 import {
   Dialog,
   DialogContent,
@@ -18,19 +17,21 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useTranslations } from 'next-intl'
 
 const fileSchema = z.object({
   file: z
     .any()
     .refine((file): file is File => file instanceof File, {
-      message: "ต้องเป็นไฟล์เท่านั้น",
+      message: "Only files are supported",
     })
     .refine((file: File) => ["video/mp4"].includes(file.type), {
-      message: "ไฟล์ต้องเป็น MP4 เท่านั้น",
+      message: "Only MP4 files are supported",
     }),
 });
 
 export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Promise<void> }) {
+  const t = useTranslations();
   const [file, setFile] = React.useState<File | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isUploading, setIsUploading] = React.useState(false);
@@ -50,7 +51,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         if (err instanceof z.ZodError) {
           setError(err.errors[0].message);
         } else {
-          setError("เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ");
+          setError(t('video.upload.uploadError'));
         }
       }
     }
@@ -69,13 +70,13 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       interval = setInterval(async () => {
         const res = await axios.get(`/api/upload-status?jobId=${jobId}`);
         const data = res.data;
-        
+
         if (data.error) {
           setUploadStatus('error');
           setIsUploading(false);
           toast({
-            title: "เกิดข้อผิดพลาด",
-            description: data.error,
+            title: t("video.upload.toast.upload.error.title"),
+            description: t("video.upload.toast.upload.error.description"),
             variant: "destructive"
           });
           if (interval) clearInterval(interval);
@@ -91,8 +92,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
           setIsOpen(false);
           await onUploadComplete();
           toast({
-            title: "อัปโหลดสำเร็จ",
-            description: "ไฟล์ของคุณพร้อมใช้งานแล้ว"
+            title: t('video.upload.toast.upload.success.title'),
+            description: t('video.upload.toast.upload.success.description')
           });
         }
       }, 2000);
@@ -129,14 +130,14 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       setJobId(data.jobId);
 
       toast({
-        title: "อัปโหลดสำเร็จ",
-        description: "ระบบกำลังประมวลผลไฟล์ของคุณ กรุณารอสักครู่..."
+        title: t('video.upload.toast.upload.success.title'),
+        description: t('video.upload.toast.upload.success.description')
       });
 
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast({
-          title: "เกิดข้อผิดพลาด",
+          title: t('video.upload.toast.upload.error.title'),
           description: err.message,
           variant: "destructive"
         });
@@ -149,8 +150,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
   }
 
   return (
-    <Dialog 
-      open={isOpen} 
+    <Dialog
+      open={isOpen}
       onOpenChange={(open) => {
         if (!isUploading) {
           setIsOpen(open);
@@ -160,8 +161,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
           }
         } else {
           toast({
-            title: "ไม่สามารถปิดได้",
-            description: "งานกำลังอัปโหลดหรือประมวลผลอย���่",
+            title: t("video.upload.cannotClose.title"),
+            description: t("video.upload.cannotClose.description"),
             variant: "destructive"
           });
         }
@@ -170,21 +171,21 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
       <DialogTrigger asChild>
         <Button className="bg-blue-600 hover:bg-blue-500 transition-all duration-200">
           <UploadCloud className="w-4 h-4 mr-2" />
-          อัปโหลดวิดีโอ
+          {t("video.upload.button")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-            อัปโหลดวิดีโอ
+            {t("video.upload.title")}
           </DialogTitle>
           <DialogDescription>
-            เลือกไฟล์ MP4 ที่ต้องการอัปโหลด
+            {t("video.upload.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div 
-            {...getRootProps()} 
+          <div
+            {...getRootProps()}
             className={cn(
               "border-2 border-dashed rounded-lg p-6 transition-all duration-200 cursor-pointer",
               isDragActive ? "border-blue-500 bg-blue-50 dark:bg-blue-950" : "border-gray-300 dark:border-gray-700",
@@ -217,8 +218,8 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
               ) : (
                 <>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">ลากและวางไฟล์ที่นี่ หรือคลิ��เพื่อเลือก</p>
-                    <p className="text-xs text-gray-500">รองรับเฉพาะ MP4</p>
+                    <p className="text-sm font-medium">{t("video.upload.dragDrop")}</p>
+                    <p className="text-xs text-gray-500">{t("video.upload.supportedFormats")}</p>
                   </div>
                 </>
               )}
@@ -233,12 +234,14 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
 
           {isUploading && (
             <div className="space-y-2">
-              <Progress 
-                value={uploadProgress} 
+              <Progress
+                value={uploadProgress}
                 className="h-3 rounded-lg [&>div]:bg-blue-500"
               />
               <p className="text-sm text-center text-muted-foreground">
-                กำลังประมวลผล... {Math.round(uploadProgress)}% | {uploadStatus}
+                {uploadStatus === "pending"
+                  ? t("video.upload.uploading")
+                  : t("video.upload.processingStatus", { progress: Math.round(uploadProgress) })}
               </p>
             </div>
           )}
@@ -251,12 +254,12 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
             {isUploading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                กำลังอัปโหลด...
+                {t("video.upload.uploading")}
               </>
             ) : (
               <>
                 <FileIcon className="w-4 h-4 mr-2" />
-                อัปโหลด
+                {t("video.upload.uploadButton")}
               </>
             )}
           </Button>

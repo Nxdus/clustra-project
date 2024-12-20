@@ -215,7 +215,10 @@
       "processingStatus": "กำลังแปลงไฟล์วิดีโอ... ({progress}%)",
       "uploadingStatus": "กำลังอัพโหลดไ์... ({progress}%)",
       "completed": "การอัพโหลดเสร็จสิ้น",
-      "cannotClose": "ไม่สามารถปิดได้",
+      "cannotClose": {
+        "title": "ไม่สามารถปิดได้",
+        "description": "งานกำลังอัปโหลดหรือประมวลผลอยู่"
+      },
       "waitProcessing": "กรุณารอจนกว่าการแปลงไฟล์จะเสร็จสมบูรณ์",
       "waitUploading": "กรุณารอจนกว่าการอัพโหลดจะเสร็จสมบูรณ์",
       "uploadSuccess": "อัพโหลดสำเร็จ",
