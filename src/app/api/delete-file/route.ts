@@ -62,7 +62,7 @@ export async function DELETE(req: Request) {
       })
     ])
 
-    const s3Filekey = video.key
+    const s3Filekey = video.key.split('/').slice(0, -1).join('/')
 
     // ลบไฟล์จาก S3
     const listParams = {
