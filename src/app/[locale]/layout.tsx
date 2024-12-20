@@ -14,13 +14,18 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+
+  console.log(params)
+
   const validLocales = ['th', 'en'];
+
   if (!validLocales.includes(locale)) {
     return { title: 'Default Title' };
   }
 
   try {
     const messages = (await import(`@/messages/${locale}.json`)).default;
+
     const t = createTranslator({
       locale,
       messages,

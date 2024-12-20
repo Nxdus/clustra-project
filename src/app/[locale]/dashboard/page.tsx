@@ -215,11 +215,3 @@ export default function Dashboard() {
     </div>
   )
 }
-
-export function generateMetadata() {
-  const t = useTranslations()
-  return {
-    title: t('meta.dashboardTitle'),
-    description: t('meta.dashboardDescription'),
-  }
-} 

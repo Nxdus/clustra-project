@@ -161,11 +161,3 @@ export default function DocPage() {
     </SidebarProvider>
   );
 }
-
-export function generateMetadata() {
-    const t = useTranslations()
-  return {
-    title: t('meta.docsTitle'),
-    description: t('meta.docsDescription'),
-  }
-}
