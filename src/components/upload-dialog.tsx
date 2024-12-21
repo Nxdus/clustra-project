@@ -116,7 +116,6 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
 
     try {
       const response = await axios.post("https://upload.clustra.tech/api/upload", formData, {
-        withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data'
         },
