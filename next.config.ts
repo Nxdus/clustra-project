@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const allowedOrigins = ['https://clustra.tech', 'https://upload.clustra.tech']; // อนุญาตเฉพาะ Origin ที่ต้องการ
 
+const headers = [
+  "Accept", "Accept-Version", "Content-Length",
+  "Content-MD5", "Content-Type", "Date", "X-Api-Version",
+  "X-CSRF-Token", "X-Requested-With",
+];
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -18,7 +24,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization, Range'
+            value: headers.join(', ')
           },
           {
             key: 'Access-Control-Allow-Credentials',
