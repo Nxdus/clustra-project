@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: '*' // อนุญาตเฉพาะ Origin ที่ระบุ
+            value: allowedOrigins.join(', ') // อนุญาตเฉพาะ Origin ที่ระบุ
           },
           {
             key: 'Access-Control-Allow-Methods',
