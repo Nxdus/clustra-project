@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://clustra.tech, https://upload.clustra.tech'
+            value: 'https://clustra.tech'
           },
           {
             key: 'Access-Control-Allow-Methods',
