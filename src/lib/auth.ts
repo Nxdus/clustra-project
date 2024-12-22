@@ -40,7 +40,6 @@ export const authOptions: AuthOptions = {
         secure: true, // ใช้ HTTPS
         sameSite: 'lax', // อนุญาต Cross-Origin
         path: '/',
-        domain: '.clustra.tech', // แชร์ Cookies ข้าม Subdomain
       },
     },
   },
