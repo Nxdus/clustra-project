@@ -5,7 +5,6 @@ import GitHubProvider from "next-auth/providers/github"
 import { prisma } from "./prisma"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from 'bcryptjs'
-import { useLocale } from "next-intl"
 
 declare module "next-auth" {
   interface Session {
@@ -18,8 +17,6 @@ declare module "next-auth" {
     }
   }
 }
-
-const locale = useLocale()
 
 export const authOptions: AuthOptions = {
   adapter: {
@@ -87,6 +84,6 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: '/' + locale,
+    signIn: '/',
   },
 }
