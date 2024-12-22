@@ -1,7 +1,5 @@
 import type { NextConfig } from "next";
 
-const allowedOrigins = ['https://clustra.tech', 'https://upload.clustra.tech']; // อนุญาตเฉพาะ Origin ที่ต้องการ
-
 const headers = [
   "Accept", "Accept-Version", "Content-Length",
   "Content-MD5", "Content-Type", "Date", "X-Api-Version",
@@ -16,7 +14,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: allowedOrigins.join(', ') // อนุญาตเฉพาะ Origin ที่ระบุ
+            value: '*'
           },
           {
             key: 'Access-Control-Allow-Methods',
