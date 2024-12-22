@@ -5,6 +5,7 @@ import GitHubProvider from "next-auth/providers/github"
 import { prisma } from "./prisma"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from 'bcryptjs'
+import { useLocale } from "next-intl"
 
 declare module "next-auth" {
   interface Session {
@@ -17,6 +18,8 @@ declare module "next-auth" {
     }
   }
 }
+
+const locale = useLocale()
 
 export const authOptions: AuthOptions = {
   adapter: {
@@ -37,7 +40,7 @@ export const authOptions: AuthOptions = {
       name: `__Secure-next-auth.session-token`,
       options: {
         domain: '.clustra.tech',
-        path: '/',
+        path: '/api/',
         sameSite: 'lax',
         httpOnly: true,
         secure: true,
@@ -84,6 +87,6 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: '/',
+    signIn: '/' + locale,
   },
 }
