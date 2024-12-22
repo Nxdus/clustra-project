@@ -119,6 +119,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         headers: {
           'Content-Type': 'multipart/form-data'
         },
+        withCredentials: true,
         onUploadProgress: function(process) {
           console.log(process.progress)
         }
