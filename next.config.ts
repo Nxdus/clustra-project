@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Credentials',
-            value: 'true' // หากต้องการรองรับ Cookies
+            value: 'true'
           }
         ]
       }

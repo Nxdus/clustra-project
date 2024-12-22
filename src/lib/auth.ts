@@ -36,10 +36,11 @@ export const authOptions: AuthOptions = {
     sessionToken: {
       name: `__Secure-next-auth.session-token`,
       options: {
-        httpOnly: true,
-        secure: true, // ใช้ HTTPS
-        sameSite: 'lax', // อนุญาต Cross-Origin
+        domain: '.clustra.tech',
         path: '/',
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: true,
       },
     },
   },
