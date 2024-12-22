@@ -17,7 +17,7 @@ export default withAuth(
     if (request.nextUrl.pathname === '/') {
       // Get locale from cookie or use default
       const locale = request.cookies.get('NEXT_LOCALE')?.value || 'en';
-      return NextResponse.redirect(new URL(`/${locale}`));
+      return NextResponse.redirect(new URL(`/${locale}`, request.url));
     }
 
     // Apply language middleware for all other routes
