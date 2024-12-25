@@ -39,10 +39,9 @@ export const authOptions: AuthOptions = {
       options: {
         domain: '.clustra.tech',
         path: '/api/',
-        sameSite: 'strict',
+        sameSite: 'lax',
         httpOnly: true,
         secure: true,
-        maxAge: 60 * 60 * 24 * 7,
       },
     },
   },

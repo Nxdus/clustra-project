@@ -121,7 +121,7 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
         },
         withCredentials: true,
         onUploadProgress: function(process) {
-          console.log(process.progress)
+          if (process.progress) setUploadProgress(process.progress * 100);
         }
       });
 
