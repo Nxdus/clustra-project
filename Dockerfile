@@ -31,10 +31,9 @@ RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
 
 # Add cron jobs
-RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
-RUN echo "*/5 * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
-RUN echo "*/10 * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-jobs.log 2>&1" > /etc/crontabs/root
-
+RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-1-jobs.log 2>&1" > /etc/crontabs/root
+RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-2-jobs.log 2>&1" > /etc/crontabs/root
+RUN echo "* * * * * /usr/local/bin/node /app/dist/worker/process-job.js >> /app/logs/process-3-jobs.log 2>&1" > /etc/crontabs/root
 RUN chmod 600 /etc/crontabs/root && chown root:root /etc/crontabs/root
 
 RUN mkdir -p /etc/supervisor/conf.d
