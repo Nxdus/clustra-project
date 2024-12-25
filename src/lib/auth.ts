@@ -38,7 +38,7 @@ export const authOptions: AuthOptions = {
       name: `__Secure-next-auth.session-token`,
       options: {
         domain: '.clustra.tech',
-        path: '/api/',
+        path: '/',
         sameSite: 'lax',
         httpOnly: true,
         secure: true,
