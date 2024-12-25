@@ -3,8 +3,6 @@ import { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import GitHubProvider from "next-auth/providers/github"
 import { prisma } from "./prisma"
-import Credentials from "next-auth/providers/credentials"
-import bcrypt from 'bcryptjs'
 
 declare module "next-auth" {
   interface Session {
