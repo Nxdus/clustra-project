@@ -33,19 +33,19 @@ export const authOptions: AuthOptions = {
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // cookies: {
-  //   sessionToken: {
-  //     name: `__Secure-next-auth.session-token`,
-  //     options: {
-  //       domain: '.clustra.tech',
-  //       path: '/api/',
-  //       sameSite: 'none',
-  //       httpOnly: true,
-  //       secure: true,
-  //       maxAge: 0,
-  //     },
-  //   },
-  // },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        domain: '.clustra.tech',
+        path: '/api/',
+        sameSite: 'none',
+        httpOnly: true,
+        secure: true,
+        maxAge: 0,
+      },
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
