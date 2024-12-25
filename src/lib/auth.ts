@@ -3,6 +3,8 @@ import { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import GitHubProvider from "next-auth/providers/github"
 import { prisma } from "./prisma"
+import bcrypt from 'bcryptjs'
+import Credentials from "next-auth/providers/credentials"
 
 declare module "next-auth" {
   interface Session {
@@ -31,19 +33,19 @@ export const authOptions: AuthOptions = {
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        domain: '.clustra.tech',
-        path: '/api/',
-        sameSite: 'none',
-        httpOnly: true,
-        secure: true,
-        maxAge: 0,
-      },
-    },
-  },
+  // cookies: {
+  //   sessionToken: {
+  //     name: `__Secure-next-auth.session-token`,
+  //     options: {
+  //       domain: '.clustra.tech',
+  //       path: '/api/',
+  //       sameSite: 'none',
+  //       httpOnly: true,
+  //       secure: true,
+  //       maxAge: 0,
+  //     },
+  //   },
+  // },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -53,21 +55,21 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    // Credentials({
-    //   name: "Credentials",
-    //   credentials: {
-    //     email: { label: "Email", type: "text" },
-    //     password: { label: "Password", type: "password" },
-    //   },
-    //   async authorize(credentials) {
-    //     const { email, password } = credentials as { email: string; password: string }
-    //     const user = await prisma.user.findUnique({ where: { email } })
-    //     if (!user || !user.password) return null
-    //     const isValid = await bcrypt.compare(password, user.password)
-    //     if (!isValid) return null
-    //     return user
-    //   }
-    // })
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = credentials as { email: string; password: string }
+        const user = await prisma.user.findUnique({ where: { email } })
+        if (!user || !user.password) return null
+        const isValid = await bcrypt.compare(password, user.password)
+        if (!isValid) return null
+        return user
+      }
+    })
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
