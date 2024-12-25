@@ -19,6 +19,7 @@ declare module "next-auth" {
 }
 
 export const authOptions: AuthOptions = {
+  debug: true,
   adapter: {
     ...PrismaAdapter(prisma),
     getUserByEmail: async (email: string) => {
@@ -38,7 +39,7 @@ export const authOptions: AuthOptions = {
       options: {
         domain: '.clustra.tech',
         path: '/api/',
-        sameSite: 'lax',
+        sameSite: 'none',
         httpOnly: true,
         secure: true,
         maxAge: 0,
@@ -54,21 +55,21 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const { email, password } = credentials as { email: string; password: string }
-        const user = await prisma.user.findUnique({ where: { email } })
-        if (!user || !user.password) return null
-        const isValid = await bcrypt.compare(password, user.password)
-        if (!isValid) return null
-        return user
-      }
-    })
+    // Credentials({
+    //   name: "Credentials",
+    //   credentials: {
+    //     email: { label: "Email", type: "text" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   async authorize(credentials) {
+    //     const { email, password } = credentials as { email: string; password: string }
+    //     const user = await prisma.user.findUnique({ where: { email } })
+    //     if (!user || !user.password) return null
+    //     const isValid = await bcrypt.compare(password, user.password)
+    //     if (!isValid) return null
+    //     return user
+    //   }
+    // })
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
