@@ -42,7 +42,7 @@ export const authOptions: AuthOptions = {
         sameSite: 'none',
         httpOnly: true,
         secure: true,
-        maxAge: 0,
+        maxAge: 60 * 60 * 24 * 7,
       },
     },
   },
