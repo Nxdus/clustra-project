@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
+const headers = [
+  "Accept", "Accept-Version", "Content-Length",
+  "Content-MD5", "Content-Type", "Date", "X-Api-Version",
+  "X-CSRF-Token", "X-Requested-With",
+];
+
 const nextConfig: NextConfig = {
-  // คงการตั้งค่า headers เดิมไว้
   async headers() {
     return [
       {
@@ -9,7 +14,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: '*'
+            value: 'https://clustra.tech'
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -17,7 +22,11 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization, Range'
+            value: headers.join(', ')
+          },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true'
           }
         ]
       }

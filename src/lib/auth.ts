@@ -32,6 +32,19 @@ export const authOptions: AuthOptions = {
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        domain: '.clustra.tech',
+        path: '/api/',
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: true,
+        maxAge: 0,
+      },
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -59,15 +72,11 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     jwt: async ({ token, user }) => {
-      if (user) {
-        token.id = user.id
-      }
+      if (user) token.id = user.id
       return token
     },
     session: async ({ session, token }) => {
-      if (session?.user) {
-        session.user.id = token.id as string
-      }
+      if (session.user) session.user.id = token.id as string
       return session
     }
   },

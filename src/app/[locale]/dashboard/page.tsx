@@ -12,13 +12,14 @@ import { UserStatsCard } from "@/components/UserStatsCard"
 import { Video } from "@/types/video"
 import { Button } from "@/components/ui/button"
 import LanguageSwitcher from "@/components/LanguageSwitcher"
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { CancelSubscriptionButton } from "@/components/cancel-subscription-button"
 import axios from 'axios';
 
 export default function Dashboard() {
   const { data: session } = useSession()
   const t = useTranslations()
+  const locale = useLocale()
   const [videos, setVideos] = React.useState<Video[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
 
@@ -144,7 +145,7 @@ export default function Dashboard() {
             <LanguageSwitcher />
             <Button
               variant="outline"
-              onClick={() => signOut({ callbackUrl: '/' })}
+              onClick={() => signOut({ callbackUrl: '/' + locale })}
               className="flex items-center gap-2"
             >
               <LogOut className="w-4 h-4" />
