@@ -120,9 +120,9 @@ export function UploadDialog({ onUploadComplete }: { onUploadComplete: () => Pro
           'Content-Type': 'multipart/form-data'
         },
         withCredentials: true,
-        onUploadProgress: function(process) {
-          if (process.progress) setUploadProgress(process.progress * 100);
-        }
+        // onUploadProgress: function(process) {
+        //   if (process.progress) setUploadProgress(process.progress * 100);
+        // }
       });
 
       if (response.status !== 200) {
