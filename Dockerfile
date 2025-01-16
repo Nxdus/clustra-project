@@ -11,6 +11,7 @@ RUN npm install
 COPY . .
 RUN apk add --no-cache openssl
 RUN npx prisma generate
+RUN npm run build
 COPY start.sh ./
 RUN chmod +x start.sh
 
@@ -24,7 +25,7 @@ WORKDIR /app
 RUN apk add --no-cache ffmpeg openssl bash supervisor curl tzdata cronie coreutils
 
 COPY --from=builder /app/ ./
-RUN npm install --production && chmod +x wait-for-it.sh
+RUN npm install && chmod +x wait-for-it.sh
 
 RUN mkdir -p /app/logs
 RUN chown root:root /app/logs
