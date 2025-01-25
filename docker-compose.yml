@@ -47,7 +47,7 @@ services:
       - web
     restart: always
     networks:
-      - macvlan_network:
+      macvlan_network:
           ipv4_address: 192.168.1.97
 
   certbot:
