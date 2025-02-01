@@ -13,9 +13,6 @@ services:
       db:
         condition: service_healthy
     restart: unless-stopped
-    networks:
-      macvlan_network:
-        ipv4_address: 192.168.1.98  # IP ของ Web App (ต้องอยู่ในเครือข่ายเดียวกับ Nginx)
 
   nginx:
     image: nginx:latest
@@ -25,14 +22,11 @@ services:
       - ./nginx/certbot:/etc/letsencrypt
       - ./nginx/www:/usr/share/nginx/html
     ports:
-      - "80:80"
-      - "443:443"
+      - "90:90"
+      - "444:444"
     depends_on:
       - web
     restart: always
-    networks:
-      macvlan_network:
-        ipv4_address: 192.168.1.97  # IP ของ Nginx (Gateway ของ Network นี้)
 
   certbot:
     image: certbot/dns-cloudflare
@@ -73,12 +67,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - macvlan_network
-
-networks:
-  macvlan_network:
-    external: true
 
 volumes:
   pgdata:
