@@ -22,12 +22,12 @@ services:
       - ./nginx/certbot:/etc/letsencrypt
       - ./nginx/www:/usr/share/nginx/html
     ports:
-      - "90:90"
-      - "444:444"
+      - "8080:80"
+      - "8443:443"
     depends_on:
       - web
     restart: always
-    
+
   certbot:
     image: certbot/dns-cloudflare
     volumes:
