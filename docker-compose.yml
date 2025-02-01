@@ -49,8 +49,6 @@ services:
       done'
     depends_on:
       - nginx
-    networks:
-      - macvlan_network
 
   db:
     image: postgres:13
